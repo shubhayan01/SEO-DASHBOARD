@@ -1,0 +1,20 @@
+node_modules/
+.env
+.env.*
+!.env.example
+data/*.json
+data/*.csv
+data/.chrome-profile/
+!data/.gitkeep
+
+# Google service-account credentials — never commit. Grants read access to
+# every connected property. Provide via GOOGLE_SERVICE_ACCOUNT_JSON in prod.
+*service-account*.json
+spatial-tempo-*.json
+
+# Local Claude Code settings (machine-specific)
+.claude/
+
+# Client-confidential documents — not application code, keep out of the repo
+*.pdf
+eMod Projects*.csv

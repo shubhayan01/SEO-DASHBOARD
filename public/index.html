@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMOD· Client Intelligence</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%234f46e5'/><text x='16' y='22' font-family='Arial' font-size='18' font-weight='700' fill='white' text-anchor='middle'>J</text></svg>" />
+  <script>
+    (function () {
+      var saved = localStorage.getItem('jw_theme');
+      var theme = saved || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+</head>
+<body>
+  <!-- ===== LOGIN ===== -->
+  <section id="login-view" class="login-view">
+    <div class="login-panel">
+      <div class="login-brand">
+        <span class="logo-mark">A</span>
+        <span class="logo-text">ASCEND</span>
+      </div>
+      <h1>Client Intelligence</h1>
+      <p class="login-sub">Sign in to your agency workspace.</p>
+      <form id="login-form">
+        <label class="field">
+          <span>Email</span>
+          <input type="email" id="login-email" autocomplete="username" placeholder="you@agency.com" required />
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input type="password" id="login-password" autocomplete="current-password" placeholder="••••••••" required />
+        </label>
+        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+        <p id="login-error" class="form-error"></p>
+      </form>
+      <p class="login-foot">SEO · Search Console · Analytics · Business Profile — one workspace.</p>
+    </div>
+    <div class="login-aside">
+      <div class="login-aside-inner">
+        <p class="eyebrow">Portfolio reporting</p>
+        <h2>Every client. Every channel. One view.</h2>
+        <p>Track organic search, traffic, local reach and Core Web Vitals across your entire client roster — pulled live from the Google APIs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== APP ===== -->
+  <div id="app-view" class="app hidden">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="logo-mark">A</span>
+        <span class="logo-text">Ascend</span>
+      </div>
+      <nav class="nav">
+        <a data-nav="portfolio" class="nav-item active">
+          <svg viewBox="0 0 24 24" class="ic"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+          <span>Portfolio</span>
+        </a>
+        <a data-nav="add" class="nav-item" data-admin>
+          <svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <span>Add client</span>
+        </a>
+        <a data-nav="team" class="nav-item" data-admin>
+          <svg viewBox="0 0 24 24" class="ic"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.2c2.5.2 4.5 2.3 4.5 4.8"/></svg>
+          <span>Client logins</span>
+        </a>
+      </nav>
+      <div class="sidebar-foot">
+        <button id="theme-toggle" class="nav-item" type="button">
+          <svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="2.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.5"/><line x1="2.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.5" y2="12"/><line x1="5.2" y1="5.2" x2="7" y2="7"/><line x1="17" y1="17" x2="18.8" y2="18.8"/><line x1="5.2" y1="18.8" x2="7" y2="17"/><line x1="17" y1="7" x2="18.8" y2="5.2"/></svg>
+          <span id="theme-label">Dark mode</span>
+        </button>
+        <div class="user-row">
+          <div class="avatar" id="user-avatar">JW</div>
+          <div class="user-meta">
+            <span id="user-email" class="user-email"></span>
+            <span id="user-role" class="user-role-tag"></span>
+            <button id="logout-btn" class="linkish">Sign out</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <!-- PORTFOLIO -->
+      <section data-view="portfolio" class="view">
+        <header class="page-head">
+          <div>
+            <h1>Portfolio</h1>
+            <p class="muted">All client websites under your Google account, at a glance.</p>
+          </div>
+          <div class="page-head-actions">
+            <span id="google-status" class="pill pill-mock">Checking connection…</span>
+            <button class="btn btn-primary" data-go="add" data-admin>Add client</button>
+          </div>
+        </header>
+        <div id="portfolio-kpis" class="kpi-strip"></div>
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Clients</h3>
+            <div class="table-tools">
+              <input type="search" id="client-filter" placeholder="Filter clients…" />
+              <select id="client-sort">
+                <option value="name">Sort: Name</option>
+                <option value="organicTraffic">Sort: Organic traffic</option>
+                <option value="clicks">Sort: Search clicks</option>
+                <option value="gbpReach">Sort: Local reach</option>
+                <option value="conversions">Sort: Conversions</option>
+              </select>
+            </div>
+          </div>
+          <div id="portfolio-table" class="table-wrap"></div>
+        </div>
+      </section>
+
+      <!-- ADD CLIENT -->
+      <section data-view="add" class="view hidden">
+        <header class="page-head">
+          <div>
+            <h1>Add client</h1>
+            <p class="muted">Register a website to track. You can connect its Google properties afterwards.</p>
+          </div>
+        </header>
+        <form id="add-form" class="panel form-panel">
+          <label class="field">
+            <span>Client name</span>
+            <input type="text" id="add-name" placeholder="Acme Dental Group" required />
+          </label>
+          <label class="field">
+            <span>Website</span>
+            <input type="text" id="add-url" placeholder="https://acmedental.com" required />
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save client</button>
+            <button type="button" class="btn btn-ghost" data-go="portfolio">Cancel</button>
+          </div>
+          <p id="add-error" class="form-error"></p>
+          <p id="add-ok" class="form-ok"></p>
+        </form>
+      </section>
+
+      <!-- CLIENT LOGINS (admin only) -->
+      <section data-view="team" class="view hidden">
+        <header class="page-head">
+          <div>
+            <h1>Client logins</h1>
+            <p class="muted">Create a sign-in for each client. A client login only ever sees its own report — never the rest of your roster.</p>
+          </div>
+        </header>
+        <form id="user-form" class="panel form-panel">
+          <div class="grid grid-2">
+            <label class="field">
+              <span>Client this login can see</span>
+              <select id="user-client" required></select>
+            </label>
+            <label class="field">
+              <span>Login email</span>
+              <input type="email" id="user-email-in" placeholder="owner@theirbusiness.com" required />
+            </label>
+          </div>
+          <label class="field">
+            <span>Temporary password</span>
+            <input type="text" id="user-pass" placeholder="At least 6 characters" required />
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create login</button>
+          </div>
+          <p id="user-error" class="form-error"></p>
+          <p id="user-ok" class="form-ok"></p>
+        </form>
+        <div class="panel">
+          <div class="panel-head"><h3>Existing logins</h3></div>
+          <div id="users-table" class="table-wrap"></div>
+        </div>
+      </section>
+
+      <!-- REPORT -->
+      <section data-view="report" class="view hidden">
+        <div id="report-body"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===== CONNECT-GOOGLE MODAL ===== -->
+  <div id="modal-root" class="modal-root hidden">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <h3>Connect Google data</h3>
+        <button class="icon-btn" data-close-modal aria-label="Close">
+          <svg viewBox="0 0 24 24" class="ic"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="muted small">Enter the property IDs for this client. When the agency service account has access, these widgets switch from sample data to live Google data automatically.</p>
+        <form id="google-form">
+          <label class="field">
+            <span>Search Console — site URL</span>
+            <input type="text" id="g-gsc" placeholder="https://acmedental.com/  or  sc-domain:acmedental.com" />
+          </label>
+          <label class="field">
+            <span>GA4 — property ID</span>
+            <input type="text" id="g-ga4" placeholder="e.g. 412345678" />
+          </label>
+          <label class="field">
+            <span>Business Profile — location ID</span>
+            <input type="text" id="g-gbp" placeholder="locations/1234567890" />
+          </label>
+          <label class="field">
+            <span>Business Profile — account ID <span class="muted small">(for reviews, optional)</span></span>
+            <input type="text" id="g-gbp-acct" placeholder="accounts/1234567890" />
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save connection</button>
+            <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
+          </div>
+          <p id="google-ok" class="form-ok"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
