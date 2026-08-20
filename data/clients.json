@@ -1,0 +1,474 @@
+[
+  {
+    "id": "4271205a-c21f-4e20-baee-27c7494102ce",
+    "slug": "bravo-protection",
+    "name": "Bravo Protection",
+    "url": "https://bravoprotectionmn.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": 84,
+    "lastAuditedAt": "2026-08-17T10:34:26.323Z",
+    "connectors": {
+      "semrush": false
+    },
+    "google": {
+      "gscSiteUrl": "https://bravoprotectionmn.com/",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=12944419523737964102",
+      "gbpCid": "12944419523737964102"
+    }
+  },
+  {
+    "id": "e89b45c0-2316-42c1-b2af-6a2a97b8225a",
+    "slug": "med-vet-pharm",
+    "name": "Med-Vet Pharm",
+    "url": "https://medvetpharm.com",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=14207037708166422956",
+      "gbpCid": "14207037708166422956"
+    }
+  },
+  {
+    "id": "4dfa203b-abfe-4058-a8ec-c99922482017",
+    "slug": "alpha-floral",
+    "name": "Alpha Floral",
+    "url": "https://alphafloralsb.com",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "https://alphafloralsb.com/",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=8413463367578477376",
+      "gbpCid": "8413463367578477376"
+    }
+  },
+  {
+    "id": "a12ef594-291c-4817-bd30-d01664bb8228",
+    "slug": "imit",
+    "name": "IMIT",
+    "url": "https://imit.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=16036424450017826054",
+      "gbpCid": "16036424450017826054"
+    }
+  },
+  {
+    "id": "38dc3ec7-9aed-481a-9cfc-da2b9533923a",
+    "slug": "valley-ridge-dental",
+    "name": "Valley Ridge Dental",
+    "url": "https://valleyridgedental.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=4211217291293867298",
+      "gbpCid": "4211217291293867298"
+    }
+  },
+  {
+    "id": "386dfd99-a361-47c8-b369-72be5b6253ca",
+    "slug": "anoka-dental",
+    "name": "Anoka Dental",
+    "url": "https://anokadental.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "sc-domain:anokadental.com",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=3706399436111509002",
+      "gbpCid": "3706399436111509002"
+    }
+  },
+  {
+    "id": "c00618b9-5f04-4587-820e-3f2cc2d46309",
+    "slug": "brooklyn-blvd-dental",
+    "name": "Brooklyn Blvd Dental",
+    "url": "https://brooklynblvddental.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "sc-domain:brooklynblvddental.com",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=5751665479230192999",
+      "gbpCid": "5751665479230192999"
+    }
+  },
+  {
+    "id": "7e7bf102-d6a5-4ba5-b36d-cc98ec55a5d7",
+    "slug": "dental-on-first",
+    "name": "Dental on First",
+    "url": "https://dentistnewprague.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "https://dentistnewprague.com/",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=1385204991757404899",
+      "gbpCid": "1385204991757404899"
+    }
+  },
+  {
+    "id": "235cdf61-2aef-4e3b-ae55-2e2c7aeb75cb",
+    "slug": "hopkins-family-dentistry",
+    "name": "Hopkins Family Dentistry",
+    "url": "https://familydentistryhopkins.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=11528525803643066911",
+      "gbpCid": "11528525803643066911"
+    }
+  },
+  {
+    "id": "859da7e6-a5dd-4b4b-bb5c-926b83f44e0d",
+    "slug": "norwood-dental",
+    "name": "Norwood Dental",
+    "url": "https://norwood-dental.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=1367354134829359998",
+      "gbpCid": "1367354134829359998"
+    }
+  },
+  {
+    "id": "50757ff7-e30f-4c6a-9d40-b7f03488a4c2",
+    "slug": "osseo-family-dental",
+    "name": "Osseo Family Dental",
+    "url": "https://osseofamilydental.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=10315583502966898532",
+      "gbpCid": "10315583502966898532"
+    }
+  },
+  {
+    "id": "3e13ca5f-14b1-42bc-af02-a58e43a6eda7",
+    "slug": "river-s-bend-family-dental",
+    "name": "River's Bend Family Dental",
+    "url": "https://riversbendfamilydental.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=18232844091487048416",
+      "gbpCid": "18232844091487048416"
+    }
+  },
+  {
+    "id": "1403472c-0f9c-4c45-91d3-ce496d78091d",
+    "slug": "riverrock-dental",
+    "name": "RiverRock Dental",
+    "url": "https://www.riverrockdds.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=13178155587619034680",
+      "gbpCid": "13178155587619034680"
+    }
+  },
+  {
+    "id": "612879db-baea-4236-a427-908d725b2291",
+    "slug": "spring-creek-dental",
+    "name": "Spring Creek Dental",
+    "url": "https://springcreekdental.net/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=13546918091774463453",
+      "gbpCid": "13546918091774463453"
+    }
+  },
+  {
+    "id": "40413f37-1199-414b-a4af-b26115f8e712",
+    "slug": "university-ave-dental",
+    "name": "University Ave Dental",
+    "url": "https://universityavedental.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=3448065345479901543",
+      "gbpCid": "3448065345479901543"
+    }
+  },
+  {
+    "id": "c08966bb-0906-4cda-b102-6a1293745ef6",
+    "slug": "diesel-components",
+    "name": "Diesel Components",
+    "url": "https://dieselcomponentsinc.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "https://dieselcomponentsinc.com/",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=7013656975353676841",
+      "gbpCid": "7013656975353676841"
+    }
+  },
+  {
+    "id": "1864fd46-350a-445f-b2df-dcfd609bb6a1",
+    "slug": "guardian-property-management",
+    "name": "Guardian Property Management",
+    "url": "https://www.guardianprop.com",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=3321724855998477254",
+      "gbpCid": "3321724855998477254"
+    }
+  },
+  {
+    "id": "01fa70b9-e2f4-4bae-abf0-7d147788adf0",
+    "slug": "work-partners",
+    "name": "Work Partners",
+    "url": "https://workpartnersusa.com",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=11107935627032372279",
+      "gbpCid": "11107935627032372279"
+    }
+  },
+  {
+    "id": "0d7a87c7-7e0b-442c-809c-9bc718a08dce",
+    "slug": "periodontal-specialists",
+    "name": "Periodontal Specialists",
+    "url": "https://www.periodontalspecialists.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=6539996812384163695",
+      "gbpCid": "6539996812384163695"
+    }
+  },
+  {
+    "id": "8190e134-6928-4a89-a66b-974cee73dcd1",
+    "slug": "le-sueur-family-dental",
+    "name": "Le Sueur Family Dental",
+    "url": "https://www.lesueurfamilydental.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=4079398595035777123",
+      "gbpCid": "4079398595035777123"
+    }
+  },
+  {
+    "id": "19895920-b352-470f-9aa3-f85c92376914",
+    "slug": "bubble-brothers",
+    "name": "Bubble Brothers",
+    "url": "https://bubblebrotherscarwash.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=8840897615851712772",
+      "gbpCid": "8840897615851712772"
+    }
+  },
+  {
+    "id": "a375378b-903d-4194-83ef-164b9925f4d1",
+    "slug": "almara",
+    "name": "Almara",
+    "url": "https://helloalmara.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {
+      "seoptimer": false
+    },
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=13994821489731857646",
+      "gbpCid": "13994821489731857646"
+    }
+  },
+  {
+    "id": "981c565a-b21e-4221-bbcd-109dc1f83776",
+    "slug": "sun-control-mn",
+    "name": "Sun Control MN",
+    "url": "https://suncontrolmn.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=1153831611998667100",
+      "gbpCid": "1153831611998667100"
+    }
+  },
+  {
+    "id": "7763c41e-e9fa-49fb-8e0d-ca3c6e28f4d2",
+    "slug": "solar-solutions",
+    "name": "Solar Solutions",
+    "url": "https://solarsolutionsvero.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=6773598825684455519",
+      "gbpCid": "6773598825684455519"
+    }
+  },
+  {
+    "id": "0f929f04-7ebb-4ee2-a7d5-9daeab1bb707",
+    "slug": "jdl-access",
+    "name": "JDL Access",
+    "url": "https://jdlaccess.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "",
+      "gbpCid": ""
+    }
+  },
+  {
+    "id": "82abb814-895b-4ee1-969c-338d57c05817",
+    "slug": "excelisor-realty",
+    "name": "Excelisor Realty",
+    "url": "https://excelsiorrealty.com/",
+    "createdAt": "2026-08-11T04:57:01.678Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": "",
+      "gbpMapUrl": "https://www.google.com/maps?cid=2171991657467641198",
+      "gbpCid": "2171991657467641198"
+    }
+  }
+]

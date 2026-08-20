@@ -1,0 +1,191 @@
+[
+  {
+    "id": "u1",
+    "email": "admin@agency.com",
+    "role": "admin",
+    "clientId": null,
+    "passwordHash": "$2a$10$qv6zKqFph8iA8kN5OMmls.IwakR/9X2RtLIYUM5yg8CBJ7/2f6SCm"
+  },
+  {
+    "id": "894fb605-6065-4491-b119-e25483122ca4",
+    "email": "bravo-protection@emod.clients",
+    "role": "client",
+    "clientId": "4271205a-c21f-4e20-baee-27c7494102ce",
+    "passwordHash": "$2a$10$GNUirpDoSJGQWwlXT7.YteVFX/8rQOSI7Yin.Zlm/6pmjnikvjfNG"
+  },
+  {
+    "id": "5c89922a-3696-41dc-8b66-97f8f783760f",
+    "email": "med-vet-pharm@emod.clients",
+    "role": "client",
+    "clientId": "e89b45c0-2316-42c1-b2af-6a2a97b8225a",
+    "passwordHash": "$2a$10$UYmXuqiR2exoGgVuoAv4/ue0kx70My2xPK2oQ/Idy2EIN9G8FUAJy"
+  },
+  {
+    "id": "b2601fd0-8f67-491e-882f-59f9a7d523d8",
+    "email": "alpha-floral@emod.clients",
+    "role": "client",
+    "clientId": "4dfa203b-abfe-4058-a8ec-c99922482017",
+    "passwordHash": "$2a$10$IpB3qhG.Wpwu7gvsQYI73uJrMgukl6nhPgbReY0HER2mOu7wgqxX6"
+  },
+  {
+    "id": "e3b34d3d-c71f-4e05-8982-dd32d2d5c08f",
+    "email": "imit@emod.clients",
+    "role": "client",
+    "clientId": "a12ef594-291c-4817-bd30-d01664bb8228",
+    "passwordHash": "$2a$10$KPmruvhm9HaZxijvWLvFh.rJW4WcWqyfNfbwkvvCUb15GAEvkWQi."
+  },
+  {
+    "id": "edec704b-d5aa-477f-b917-eb5c2b66c4a0",
+    "email": "valley-ridge-dental@emod.clients",
+    "role": "client",
+    "clientId": "38dc3ec7-9aed-481a-9cfc-da2b9533923a",
+    "passwordHash": "$2a$10$QCMT7MlQx47gEuWx3FKlW.dlzb.Yyh9HtRitpMSWMkfcFuitg/Mt2"
+  },
+  {
+    "id": "9446e5c6-31b7-49d3-b07d-39d8bcf51a21",
+    "email": "anoka-dental@emod.clients",
+    "role": "client",
+    "clientId": "386dfd99-a361-47c8-b369-72be5b6253ca",
+    "passwordHash": "$2a$10$VUk2ereiJ2U.uSoahF4.ouudRLtmK9l9DZkmAVsqMUI2l8FgaiwY6"
+  },
+  {
+    "id": "29380ab6-67c9-415d-9ad3-6f7e3b73dcfa",
+    "email": "brooklyn-blvd-dental@emod.clients",
+    "role": "client",
+    "clientId": "c00618b9-5f04-4587-820e-3f2cc2d46309",
+    "passwordHash": "$2a$10$bFQ8h.H9T7VycctYSIX32u/nBAKJyueDdDsLPUfhZfmSK.z1ju0Ya"
+  },
+  {
+    "id": "0dde1a00-2d62-4475-9bb3-f0f03a321fa0",
+    "email": "dental-on-first@emod.clients",
+    "role": "client",
+    "clientId": "7e7bf102-d6a5-4ba5-b36d-cc98ec55a5d7",
+    "passwordHash": "$2a$10$ALpEwJov9MpqvlKlXDkocOO0Q4.uKlcrof9LijyS0xk8IR.raxxyu"
+  },
+  {
+    "id": "b774fda1-3af5-4240-92b5-c4ef9ff2c396",
+    "email": "hopkins-family-dentistry@emod.clients",
+    "role": "client",
+    "clientId": "235cdf61-2aef-4e3b-ae55-2e2c7aeb75cb",
+    "passwordHash": "$2a$10$Nqan3xlcFqJTPfsG5ASVyeqadtq4FhsWVtbkhwHBC4F9uVPgg2ONu"
+  },
+  {
+    "id": "17e94f80-dfe7-49be-992c-9b5136b8f9bc",
+    "email": "norwood-dental@emod.clients",
+    "role": "client",
+    "clientId": "859da7e6-a5dd-4b4b-bb5c-926b83f44e0d",
+    "passwordHash": "$2a$10$LKLEYFTFVeNJbUf8jmIe7.RUQJlvUXn8YT90n42Oc6QDMagb9zW96"
+  },
+  {
+    "id": "75deb2b8-945c-49a0-b4a5-dd6b0c47edfd",
+    "email": "osseo-family-dental@emod.clients",
+    "role": "client",
+    "clientId": "50757ff7-e30f-4c6a-9d40-b7f03488a4c2",
+    "passwordHash": "$2a$10$faIHGWXkGQbh1PQ80t9q4.FNnOjWqbov2.m8.BaQ9UxUZMoGA0l9i"
+  },
+  {
+    "id": "3941cff3-9db2-44d1-bfdb-affb2f83128b",
+    "email": "river-s-bend-family-dental@emod.clients",
+    "role": "client",
+    "clientId": "3e13ca5f-14b1-42bc-af02-a58e43a6eda7",
+    "passwordHash": "$2a$10$VBUNRc5FpzqxLV3wql3PO..hoPeTqhK/QVyRBOi4ZTM7WvyYaMadi"
+  },
+  {
+    "id": "9588bdb3-99c1-4d15-8af9-d8fd5e25d7bf",
+    "email": "riverrock-dental@emod.clients",
+    "role": "client",
+    "clientId": "1403472c-0f9c-4c45-91d3-ce496d78091d",
+    "passwordHash": "$2a$10$FS/OGIYLVBdoOdX4Nbix5Okq9xhGmIg4mMiXFRragvavB7Ld/EHxK"
+  },
+  {
+    "id": "f43486a8-cdde-4841-bd4b-183626cde4ae",
+    "email": "spring-creek-dental@emod.clients",
+    "role": "client",
+    "clientId": "612879db-baea-4236-a427-908d725b2291",
+    "passwordHash": "$2a$10$S1xKjnWPDLIgpufhK7WeTO7jR.CpsGFJtXAT1hUYHdcavyMR7c9ay"
+  },
+  {
+    "id": "205a64ba-9161-455f-9822-f105e00ca09c",
+    "email": "university-ave-dental@emod.clients",
+    "role": "client",
+    "clientId": "40413f37-1199-414b-a4af-b26115f8e712",
+    "passwordHash": "$2a$10$.28/LDYEoNYMgBn8Spzdce0F6EE70/ZAYRD5H44NLIb.RCxEl7nH6"
+  },
+  {
+    "id": "808b028a-cfd8-43b1-841f-68d9abe8dc5e",
+    "email": "diesel-components@emod.clients",
+    "role": "client",
+    "clientId": "c08966bb-0906-4cda-b102-6a1293745ef6",
+    "passwordHash": "$2a$10$Sb/EIBc8ygC0HHNBmBacWuGHlJYvhmFpjPO4eC1rn3erzfN.0Ut9a"
+  },
+  {
+    "id": "35463a1f-656c-455f-b72f-0e412a5db5e8",
+    "email": "guardian-property-management@emod.clients",
+    "role": "client",
+    "clientId": "1864fd46-350a-445f-b2df-dcfd609bb6a1",
+    "passwordHash": "$2a$10$.gI9PNGkxllFx7F76GiJxu3esU3BFyYozYrLgYB5a/lmStRzGOBCi"
+  },
+  {
+    "id": "73525280-43d5-43a5-b118-7e639a14f3a5",
+    "email": "work-partners@emod.clients",
+    "role": "client",
+    "clientId": "01fa70b9-e2f4-4bae-abf0-7d147788adf0",
+    "passwordHash": "$2a$10$m5XYJ3V66LbIOpmW94qSYevv53p1s185QLOsQKRg/U5Uo7iVam/Rm"
+  },
+  {
+    "id": "9238d093-7154-49b0-8c36-d361a5572236",
+    "email": "periodontal-specialists@emod.clients",
+    "role": "client",
+    "clientId": "0d7a87c7-7e0b-442c-809c-9bc718a08dce",
+    "passwordHash": "$2a$10$izqkSfkVu030QCu2c5A21uquyUkd2ACzU7kKQUslMdHkmmN0sH8le"
+  },
+  {
+    "id": "ba4fc815-037d-4ae8-afab-67999848dae4",
+    "email": "le-sueur-family-dental@emod.clients",
+    "role": "client",
+    "clientId": "8190e134-6928-4a89-a66b-974cee73dcd1",
+    "passwordHash": "$2a$10$L/sFZRpc9LcCM8c5swPeSu/EbnIuZNUdKcqO9jnYxqdh7tiAOR4qO"
+  },
+  {
+    "id": "27caee9b-7076-4832-a9ab-a2642677c456",
+    "email": "bubble-brothers@emod.clients",
+    "role": "client",
+    "clientId": "19895920-b352-470f-9aa3-f85c92376914",
+    "passwordHash": "$2a$10$gVnyrgGUkUoRgcGQSUYHZeZv5PBb7G8nQfnua4yxyhOL3vACb7a9O"
+  },
+  {
+    "id": "065ebe50-71e3-4197-9ef7-89ed092eb12b",
+    "email": "almara@emod.clients",
+    "role": "client",
+    "clientId": "a375378b-903d-4194-83ef-164b9925f4d1",
+    "passwordHash": "$2a$10$iQ6Jr257kISggTFd6BcrWuDrq3WyjiGO018VcvhZSkU9lzVAQG8.q"
+  },
+  {
+    "id": "ea62a97c-79d3-4894-8bcd-a57a2ea0433a",
+    "email": "sun-control-mn@emod.clients",
+    "role": "client",
+    "clientId": "981c565a-b21e-4221-bbcd-109dc1f83776",
+    "passwordHash": "$2a$10$pt/X9hmKbp7xy.zwSD424.vuQiRRTVXeIaDZAtBRX4siZwQ.E.My."
+  },
+  {
+    "id": "da9281be-87a9-4760-afb0-56bb2c3e25c6",
+    "email": "solar-solutions@emod.clients",
+    "role": "client",
+    "clientId": "7763c41e-e9fa-49fb-8e0d-ca3c6e28f4d2",
+    "passwordHash": "$2a$10$0GFuZZhFxmHLdqVqbG3wnuymc0t146sM3v5d4o0RHl4ZY5bFGrzhG"
+  },
+  {
+    "id": "aaf57249-d7cf-4029-a410-968b432714c7",
+    "email": "jdl-access@emod.clients",
+    "role": "client",
+    "clientId": "0f929f04-7ebb-4ee2-a7d5-9daeab1bb707",
+    "passwordHash": "$2a$10$oFUN.fKxddwqvzmYvSzmu.frdNJj52BWMRT2XpuQgctjO6U68OM8y"
+  },
+  {
+    "id": "94c8013c-8d50-4e47-8986-2b1e47b8fa74",
+    "email": "excelisor-realty@emod.clients",
+    "role": "client",
+    "clientId": "82abb814-895b-4ee1-969c-338d57c05817",
+    "passwordHash": "$2a$10$TQpba4YC.1GyXgcueguhj.hZlBUINBK6ZRddbZONRMXpjc1utpj.2"
+  }
+]

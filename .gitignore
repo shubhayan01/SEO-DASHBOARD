@@ -3,6 +3,11 @@ node_modules/
 .env.*
 !.env.example
 data/*.json
+# Ship demo data with the deploy so free-tier hosts (no persistent disk) boot
+# with clients + logins already present. Runtime edits still won't persist on
+# free tier, but this seed data always will.
+!data/clients.json
+!data/users.json
 data/*.csv
 data/.chrome-profile/
 !data/.gitkeep
