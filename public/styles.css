@@ -253,6 +253,17 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .crumb { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); cursor: pointer; font-size: 13px; margin-bottom: 14px; }
 .crumb:hover { color: var(--text); }
 
+/* grouped profile: chip + per-site switcher */
+.group-tag { display: inline-block; font-size: 11px; font-weight: 600; color: var(--brand); background: var(--brand-soft); border-radius: 999px; padding: 1px 8px; vertical-align: middle; margin-left: 6px; }
+.site-switcher { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+.site-pill {
+  padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border-strong);
+  background: var(--surface); font: inherit; font-weight: 600; font-size: 13px;
+  color: var(--text-2); cursor: pointer; transition: background .12s, color .12s, border-color .12s;
+}
+.site-pill:hover { color: var(--text); background: var(--surface-2); }
+.site-pill.active { color: #fff; background: var(--brand); border-color: var(--brand); }
+
 /* tabs */
 .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 20px; overflow-x: auto; }
 .tab { padding: 10px 14px; font-weight: 550; color: var(--text-2); cursor: pointer; border: none; background: none; font: inherit; border-bottom: 2px solid transparent; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; }

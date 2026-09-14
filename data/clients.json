@@ -388,7 +388,8 @@
     "lastScore": null,
     "lastAuditedAt": null,
     "connectors": {
-      "seoptimer": false
+      "seoptimer": false,
+      "semrush": false
     },
     "google": {
       "gscSiteUrl": "",
@@ -470,5 +471,39 @@
       "gbpMapUrl": "https://www.google.com/maps?cid=2171991657467641198",
       "gbpCid": "2171991657467641198"
     }
+  },
+  {
+    "id": "ecd5dae6-cb7f-4f51-a901-59d5ffafe1de",
+    "slug": "justwords-internal-websites",
+    "name": "Justwords Internal Websites",
+    "group": true,
+    "url": "https://justwords.digital/",
+    "createdAt": "2026-09-14T00:00:00.000Z",
+    "lastScore": null,
+    "lastAuditedAt": null,
+    "connectors": {},
+    "google": {
+      "gscSiteUrl": "",
+      "ga4PropertyId": "",
+      "gbpLocationId": "",
+      "gbpAccountId": ""
+    },
+    "sites": [
+      {
+        "id": "2790386c-4f1e-4d61-aa42-7709d67c1fc9",
+        "name": "Justwords.digital",
+        "url": "https://justwords.digital/"
+      },
+      {
+        "id": "d48ea0d3-2c96-4367-9c20-3ddc91b74df6",
+        "name": "Justwords.in",
+        "url": "https://justwords.in/"
+      },
+      {
+        "id": "8ff398d2-0a7c-45db-8306-1c0589e1742a",
+        "name": "Maxifygrowth",
+        "url": "https://maxifygrowth.com/strategic-business-consulting-services/"
+      }
+    ]
   }
 ]

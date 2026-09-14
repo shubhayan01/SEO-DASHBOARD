@@ -187,5 +187,12 @@
     "role": "client",
     "clientId": "82abb814-895b-4ee1-969c-338d57c05817",
     "passwordHash": "$2a$10$TQpba4YC.1GyXgcueguhj.hZlBUINBK6ZRddbZONRMXpjc1utpj.2"
+  },
+  {
+    "id": "43036a9c-f8a8-4bfe-af0e-a77e071acf86",
+    "email": "justwords.admin",
+    "role": "client",
+    "clientId": "ecd5dae6-cb7f-4f51-a901-59d5ffafe1de",
+    "passwordHash": "$2a$10$pPKLHLERaEaD5txlR9ZqKOEDY.ZIVw15vkmHRnOSmwUXLzjJTHFvG"
   }
 ]

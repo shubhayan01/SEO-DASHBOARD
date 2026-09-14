@@ -9,6 +9,8 @@ const state = {
   clientId: localStorage.getItem('jw_client') || null,
   portfolio: null,
   currentClientId: null,
+  currentSiteId: null,
+  currentGroup: null,
   currentData: null,
   currentClient: null,
   currentRange: localStorage.getItem('jw_range') || '12m',
@@ -205,7 +207,7 @@ function renderPortfolioTable() {
       <td>
         <div class="client-cell">
           <span class="client-fav">${esc(initials(r.name))}</span>
-          <div><div class="client-name">${esc(r.name)}</div><div class="client-url">${esc(hostOf(r.url))}</div></div>
+          <div><div class="client-name">${esc(r.name)}${r.sites ? ` <span class="group-tag">${r.sites} sites</span>` : ''}</div><div class="client-url">${r.sites ? esc(hostOf(r.url)) + ' +' + (r.sites - 1) + ' more' : esc(hostOf(r.url))}</div></div>
         </div>
       </td>
       <td class="num">${fmtNum(m.organicTraffic)} <span class="delta ${dc >= 0 ? 'up' : 'down'}">${dc >= 0 ? '▲' : '▼'}${Math.abs(dc)}%</span></td>
@@ -322,14 +324,17 @@ $('#users-table').addEventListener('click', async (e) => {
 // =====================================================================
 // REPORT (per client, tabbed)
 // =====================================================================
-async function openReport(id) {
+async function openReport(id, siteId = null) {
   state.currentClientId = id;
+  state.currentSiteId = siteId;
   navigate('report');
   const body = $('#report-body');
   body.innerHTML = `<div class="loading-wrap"><div class="spinner"></div><p>Loading client report…</p></div>`;
   try {
-    const { client, data } = await api('/api/dashboard/' + id);
-    state.currentClient = client; state.currentData = data;
+    const qs = siteId ? '?site=' + encodeURIComponent(siteId) : '';
+    const { client, data, group } = await api('/api/dashboard/' + id + qs);
+    state.currentClient = client; state.currentData = data; state.currentGroup = group || null;
+    state.currentSiteId = group ? group.selectedSiteId : null;
     renderReport();
   } catch (e) {
     body.innerHTML = `<div class="empty">Could not load report: ${esc(e.message)}</div>`;
@@ -363,17 +368,23 @@ function sectionBody(key, d) {
 }
 
 function renderReport() {
-  const c = state.currentClient, d = state.currentData;
+  const c = state.currentClient, d = state.currentData, g = state.currentGroup;
+  const title = g ? g.name : c.name;
   const overallLive = !d.mock;
   const rangeOptions = Object.entries(RANGE_LABEL)
     .map(([k, label]) => `<option value="${k}" ${k === state.currentRange ? 'selected' : ''}>${label}</option>`).join('');
+  // For a grouped profile, a pill row lets you switch between the bundled sites;
+  // the URL line and every chart below reflect whichever site is selected.
+  const siteSwitcher = g ? `<div class="site-switcher" id="site-switcher">
+    ${g.sites.map((s) => `<button class="site-pill ${s.id === g.selectedSiteId ? 'active' : ''}" data-site="${esc(s.id)}">${esc(s.name)}</button>`).join('')}
+  </div>` : '';
   $('#report-body').innerHTML = `
     ${isAdmin() ? `<div class="crumb" data-go="portfolio">${svg('back')} Portfolio</div>` : ''}
     <div class="report-top">
       <div class="report-id">
-        <span class="report-fav">${esc(initials(c.name))}</span>
+        <span class="report-fav">${esc(initials(title))}</span>
         <div>
-          <h1>${esc(c.name)}</h1>
+          <h1>${esc(title)}${g ? ` <span class="group-tag">${g.sites.length} sites</span>` : ''}</h1>
           <a class="client-url" href="${esc(c.url)}" target="_blank" rel="noopener">${esc(hostOf(c.url))} ${svg('external', 'ic')}</a>
         </div>
       </div>
@@ -382,6 +393,7 @@ function renderReport() {
         ${isAdmin() ? `<button class="btn btn-sm" id="connect-google-btn">${svg('plug')} Connect Google</button>` : ''}
       </div>
     </div>
+    ${siteSwitcher}
     <div class="section-nav" id="section-nav">
       <div class="section-nav-tabs">
         ${REPORT_SECTIONS.map(([k, label, ic], i) => `<button class="snav ${i === 0 ? 'active' : ''}" data-scroll="sec-${k}">${svg(ic, 'ic')} ${label}</button>`).join('')}
@@ -416,6 +428,11 @@ function setupScrollSpy() {
 
 // report-level events: scroll to a section, or open the connect-Google modal.
 $('#report-body').addEventListener('click', (e) => {
+  const site = e.target.closest('[data-site]');
+  if (site) {
+    if (site.dataset.site !== state.currentSiteId) openReport(state.currentClientId, site.dataset.site);
+    return;
+  }
   const snav = e.target.closest('[data-scroll]');
   if (snav) {
     document.getElementById(snav.dataset.scroll)?.scrollIntoView({ behavior: 'smooth', block: 'start' });

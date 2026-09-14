@@ -283,15 +283,41 @@ async function resolveDashboard(client) {
   return data;
 }
 
+// A "group" profile bundles several websites under one record (client.sites[]).
+// Resolve which sub-site to render into an "effective client" the rest of the
+// pipeline treats exactly like a normal single-site client. Returns null for a
+// plain client so callers fall straight through to the existing behaviour.
+function resolveGroupSite(client, requestedSiteId) {
+  const sites = Array.isArray(client.sites) ? client.sites : [];
+  if (!sites.length) return null;
+  const sel = sites.find((s) => s.id === requestedSiteId) || sites[0];
+  // id drives the deterministic mock seed, so each site gets its own numbers.
+  const effective = {
+    ...client,
+    id: sel.id,
+    name: sel.name,
+    url: sel.url,
+    google: sel.google || client.google,
+  };
+  const group = {
+    name: client.name,
+    selectedSiteId: sel.id,
+    sites: sites.map((s) => ({ id: s.id, name: s.name, url: s.url })),
+  };
+  return { effective, group };
+}
+
 // ---------- Analytics dashboard (mock, upgraded to live per source) ----------
 app.get('/api/dashboard/:id', auth, async (req, res) => {
   if (!canAccessClient(req.user, req.params.id)) return res.status(403).json({ error: 'Not allowed to view this client' });
   const clients = read(CLIENTS_FILE);
   const client = clients.find((c) => c.id === req.params.id);
   if (!client) return res.status(404).json({ error: 'Client not found' });
+  const resolved = resolveGroupSite(client, req.query.site);
+  const target = resolved ? resolved.effective : client;
   try {
-    const data = await resolveDashboard(client);
-    res.json({ client, data });
+    const data = await resolveDashboard(target);
+    res.json({ client: target, data, group: resolved ? resolved.group : null });
   } catch (e) {
     res.status(500).json({ error: 'Could not build dashboard: ' + e.message });
   }
@@ -308,6 +334,7 @@ app.get('/api/portfolio', auth, (req, res) => {
       id: c.id,
       name: c.name,
       url: c.url,
+      sites: Array.isArray(c.sites) ? c.sites.length : 0,
       lastScore: c.lastScore,
       lastAuditedAt: c.lastAuditedAt,
       connected: {
