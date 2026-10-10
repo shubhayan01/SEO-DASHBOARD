@@ -439,6 +439,31 @@ export function generateDashboard(client, connectors = {}) {
     },
   };
 
+  // ---- BrightLocal (local SEO: local rankings, citations/NAP, GBP audit) ----
+  // Mirrors the live shape from brightlocal.js so the UI renders identically
+  // whether the numbers are sample or live.
+  const blCitations = intBetween(r, 18, 140);
+  const brightlocal = {
+    hasData: true,
+    businessName: client.name,
+    claimed: r() > 0.2,
+    domainAuthority: intBetween(r, 8, 62),
+    backlinks: intBetween(r, 20, 5200),
+    citations: {
+      count: blCitations,
+      possible: blCitations + intBetween(r, 10, 80),
+      napConsistency: pct(r, 62, 99),
+    },
+    reviews: { count: reviewCount, avgRating },
+    photos: intBetween(r, 4, 180),
+    localRankings: keywordRankings.slice(0, 8).map((k) => {
+      const rank = intBetween(r, 1, 20);
+      return { keyword: k.keyword, rank, inTop3: rank <= 3, inTop10: rank <= 10 };
+    }),
+    reportUrl: null,
+    collectedAt: new Date().toISOString(),
+  };
+
   return {
     domain,
     generatedAt: new Date().toISOString(),
@@ -475,6 +500,7 @@ export function generateDashboard(client, connectors = {}) {
     serpFeatures,
     keywordMovers,
     siteHealth,
+    brightlocal,
   };
 }
 

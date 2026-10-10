@@ -16,6 +16,7 @@ import {
   fetchGBP,
   fetchCrux,
 } from './google.js';
+import { brightlocalConfigured, fetchBrightLocal } from './brightlocal.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // DATA_DIR must point at persistent storage in production. On Render/Railway the
@@ -201,6 +202,11 @@ app.get('/api/google/status', auth, (_req, res) => {
   res.json({ configured: googleConfigured() });
 });
 
+// ---------- is the BrightLocal API key wired up? ----------
+app.get('/api/brightlocal/status', auth, (_req, res) => {
+  res.json({ configured: brightlocalConfigured() });
+});
+
 /**
  * Resolve a full dashboard for a client: start from deterministic mock data,
  * then overwrite each source with LIVE Google data when the connector is on,
@@ -212,9 +218,10 @@ async function resolveDashboard(client) {
   const cn = client.connectors || {};
   const g = client.google || {};
   const data = generateDashboard(client, cn);
-  const sources = { gsc: 'mock', ga4: 'mock', gbp: 'mock', crux: 'mock' };
+  const sources = { gsc: 'mock', ga4: 'mock', gbp: 'mock', crux: 'mock', bl: 'mock' };
   const errors = {};
   const live = googleConfigured();
+  const bl = client.brightlocal || {};
 
   const jobs = [];
   if (live && cn.googleSearchConsole !== false && g.gscSiteUrl) {
@@ -272,6 +279,26 @@ async function resolveDashboard(client) {
             inpHistory: r.crux.inpHistory?.length ? r.crux.inpHistory : data.crux.inpHistory };
           sources.crux = 'live';
         } else errors.crux = r.error;
+      })
+    );
+  }
+
+  // BrightLocal — local SEO (rankings, citations/NAP, GBP audit) from an
+  // existing report. Key lives in .env; each client maps to a location once.
+  if (brightlocalConfigured() && cn.brightlocal !== false && bl.locationId) {
+    jobs.push(
+      fetchBrightLocal(bl.locationId, { gbpReportId: bl.gbpReportId }).then((r) => {
+        if (r.available) {
+          const mockBl = data.brightlocal || {};
+          data.brightlocal = {
+            ...mockBl,
+            ...r.brightlocal,
+            citations: { ...mockBl.citations, ...r.brightlocal.citations },
+            reviews: { ...mockBl.reviews, ...r.brightlocal.reviews },
+            localRankings: r.brightlocal.localRankings?.length ? r.brightlocal.localRankings : mockBl.localRankings,
+          };
+          sources.bl = 'live';
+        } else errors.bl = r.error;
       })
     );
   }
@@ -406,6 +433,20 @@ app.put('/api/clients/:id/google', auth, requireAdmin, (req, res) => {
   }
   write(CLIENTS_FILE, clients);
   res.json({ google: client.google });
+});
+
+// Map a client to its BrightLocal location so live local-SEO data can be pulled.
+app.put('/api/clients/:id/brightlocal', auth, requireAdmin, (req, res) => {
+  const clients = read(CLIENTS_FILE);
+  const client = clients.find((c) => c.id === req.params.id);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  const allowed = ['locationId', 'gbpReportId'];
+  client.brightlocal = client.brightlocal || {};
+  for (const k of allowed) {
+    if (k in (req.body || {})) client.brightlocal[k] = String(req.body[k] || '').trim();
+  }
+  write(CLIENTS_FILE, clients);
+  res.json({ brightlocal: client.brightlocal });
 });
 
 // ---------- SEO audit ----------

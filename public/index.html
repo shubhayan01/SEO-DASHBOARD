@@ -189,7 +189,7 @@
     <div class="modal-backdrop" data-close-modal></div>
     <div class="modal" role="dialog" aria-modal="true">
       <div class="modal-head">
-        <h3>Connect Google data</h3>
+        <h3>Connect data sources</h3>
         <button class="icon-btn" data-close-modal aria-label="Close">
           <svg viewBox="0 0 24 24" class="ic"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
         </button>
@@ -212,6 +212,15 @@
           <label class="field">
             <span>Business Profile — account ID <span class="muted small">(for reviews, optional)</span></span>
             <input type="text" id="g-gbp-acct" placeholder="accounts/1234567890" />
+          </label>
+          <div class="field-group-sep">BrightLocal — local SEO <span class="muted small">(needs BRIGHTLOCAL_API_KEY in .env)</span></div>
+          <label class="field">
+            <span>BrightLocal — location ID</span>
+            <input type="text" id="bl-loc" placeholder="e.g. 123456" />
+          </label>
+          <label class="field">
+            <span>BrightLocal — GBP report ID <span class="muted small">(optional; auto-picks first report)</span></span>
+            <input type="text" id="bl-report" placeholder="e.g. 987654" />
           </label>
           <div class="form-actions">
             <button type="submit" class="btn btn-primary">Save connection</button>

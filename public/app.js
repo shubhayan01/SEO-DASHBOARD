@@ -390,7 +390,7 @@ function renderReport() {
       </div>
       <div class="report-actions">
         <span class="pill ${overallLive ? 'pill-live' : 'pill-mock'}">${overallLive ? 'Live data' : 'Sample data'}</span>
-        ${isAdmin() ? `<button class="btn btn-sm" id="connect-google-btn">${svg('plug')} Connect Google</button>` : ''}
+        ${isAdmin() ? `<button class="btn btn-sm" id="connect-google-btn">${svg('plug')} Connect data</button>` : ''}
       </div>
     </div>
     ${siteSwitcher}
@@ -495,8 +495,40 @@ function tabOverview(d) {
         ${donut(sources)}
       </div>
     </div>
+    ${localSeoCard(d)}
     ${connectorsPanel(d)}
   `;
+}
+
+// ---------- Local SEO (BrightLocal) card ----------
+function localSeoCard(d) {
+  if (!d.connectors.brightlocal) return '';
+  const b = d.brightlocal || {};
+  const c = b.citations || {};
+  const rv = b.reviews || {};
+  const ranks = b.localRankings || [];
+  const top3 = ranks.filter((r) => r.inTop3).length;
+  return `
+    <div class="widget mb">
+      <div class="widget-head"><h3>${svg('brightlocal')} Local SEO ${sourceBadge('bl')}</h3>
+        ${b.reportUrl
+          ? `<a class="src-badge" href="${esc(b.reportUrl)}" target="_blank" rel="noopener">Open BrightLocal report ↗</a>`
+          : '<span class="src-badge">BrightLocal</span>'}</div>
+      <div class="wstats">
+        ${wstat('Citations', c.count == null ? '—' : fmtNum(c.count))}
+        ${wstat('NAP consistency', c.napConsistency == null ? '—' : c.napConsistency + '%')}
+        ${wstat('Reviews', rv.count == null ? '—' : fmtNum(rv.count))}
+        ${wstat('Avg. rating', rv.avgRating == null ? '—' : rv.avgRating + '★')}
+        ${wstat('Domain authority', b.domainAuthority == null ? '—' : b.domainAuthority)}
+        ${wstat('Local top 3', ranks.length ? `${top3}/${ranks.length}` : '—')}
+      </div>
+      ${ranks.length ? `<div class="table-wrap" style="margin-top:12px"><table class="tbl">
+        <thead><tr><th>Local keyword</th><th class="num">Map rank</th><th>Top 10</th></tr></thead>
+        <tbody>${ranks.map((r) => `<tr><td class="kw">${esc(r.keyword)}</td>
+          <td class="num"><span class="pos">${r.rank == null ? '—' : r.rank}</span></td>
+          <td>${r.inTop10 ? '<span class="up">✓</span>' : '—'}</td></tr>`).join('')}</tbody>
+      </table></div>` : ''}
+    </div>`;
 }
 
 function connectorsPanel(d) {
@@ -520,7 +552,7 @@ function connectorsPanel(d) {
       ${item('pageSpeed', 'PageSpeed / CrUX', 'gauge', d.sources.crux === 'live' ? 'Live' : 'Sample data')}
       ${item('ahrefs', 'Ahrefs (backlinks)', 'link', cn.ahrefs ? 'Enabled' : 'Off')}
       ${item('semrush', 'SEMrush (competitors)', 'traffic', cn.semrush ? 'Enabled' : 'Off')}
-      ${item('brightlocal', 'BrightLocal (local SEO)', 'brightlocal', cn.brightlocal ? 'Enabled' : 'Off')}
+      ${item('brightlocal', 'BrightLocal (local SEO)', 'brightlocal', d.sources.bl === 'live' ? 'Live' : 'Sample data')}
       ${item('meta', 'Meta (Facebook / Instagram)', 'meta', cn.meta ? 'Enabled' : 'Off')}
       ${item('moz', 'Moz (domain authority)', 'moz', cn.moz ? 'Enabled' : 'Off')}
       ${item('googleads', 'Google Ads (paid search)', 'googleads', cn.googleads ? 'Enabled' : 'Off')}
@@ -787,6 +819,9 @@ function openGoogleModal() {
   $('#g-ga4').value = g.ga4PropertyId || '';
   $('#g-gbp').value = g.gbpLocationId || '';
   $('#g-gbp-acct').value = g.gbpAccountId || '';
+  const bl = state.currentClient.brightlocal || {};
+  $('#bl-loc').value = bl.locationId || '';
+  $('#bl-report').value = bl.gbpReportId || '';
   $('#google-ok').textContent = '';
   $('#modal-root').classList.remove('hidden');
 }
@@ -800,6 +835,12 @@ $('#google-form').addEventListener('submit', async (e) => {
       body: JSON.stringify({
         gscSiteUrl: $('#g-gsc').value, ga4PropertyId: $('#g-ga4').value,
         gbpLocationId: $('#g-gbp').value, gbpAccountId: $('#g-gbp-acct').value,
+      }),
+    });
+    await api('/api/clients/' + state.currentClientId + '/brightlocal', {
+      method: 'PUT',
+      body: JSON.stringify({
+        locationId: $('#bl-loc').value, gbpReportId: $('#bl-report').value,
       }),
     });
     $('#google-ok').textContent = 'Saved. Reloading live data…';
