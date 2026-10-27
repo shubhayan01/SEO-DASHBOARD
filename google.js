@@ -104,6 +104,45 @@ async function gapi(url, { scope, method = 'GET', body } = {}) {
   return res.json();
 }
 
+// =====================================================================
+// Discovery — what can this service account actually see?
+// Used by the "sync" flow to auto-map clients to their real properties.
+// Each returns [] (never throws) so a sync can degrade gracefully.
+// =====================================================================
+
+/** All Search Console sites the service account is verified on. */
+export async function listSearchConsoleSites() {
+  try {
+    const j = await gapi('https://www.googleapis.com/webmasters/v3/sites', { scope: [SCOPES.gsc] });
+    return (j.siteEntry || [])
+      .filter((s) => s.permissionLevel !== 'siteUnverifiedUser')
+      .map((s) => ({ siteUrl: s.siteUrl, permissionLevel: s.permissionLevel }));
+  } catch (e) {
+    console.warn('[google] list GSC sites failed:', e.message.split('\n')[0]);
+    return [];
+  }
+}
+
+/** All GA4 properties the service account can read (flattened across accounts). */
+export async function listGA4Properties() {
+  try {
+    const out = [];
+    let pageToken = '';
+    do {
+      const u = `https://analyticsadmin.googleapis.com/v1beta/accountSummaries?pageSize=200${pageToken ? `&pageToken=${pageToken}` : ''}`;
+      const j = await gapi(u, { scope: [SCOPES.ga4] });
+      for (const acc of j.accountSummaries || [])
+        for (const p of acc.propertySummaries || [])
+          out.push({ property: p.property, id: p.property.split('/')[1], name: p.displayName, account: acc.displayName });
+      pageToken = j.nextPageToken || '';
+    } while (pageToken);
+    return out;
+  } catch (e) {
+    console.warn('[google] list GA4 properties failed:', e.message.split('\n')[0]);
+    return [];
+  }
+}
+
 // ---------- small helpers ----------
 const round = (n) => Math.round(n);
 const pct1 = (n) => +(+n).toFixed(1);

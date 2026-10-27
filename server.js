@@ -17,6 +17,7 @@ import {
   fetchCrux,
 } from './google.js';
 import { brightlocalConfigured, fetchBrightLocal } from './brightlocal.js';
+import { runSync, syncReadiness } from './sync.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // DATA_DIR must point at persistent storage in production. On Render/Railway the
@@ -304,7 +305,30 @@ async function resolveDashboard(client) {
   }
 
   await Promise.allSettled(jobs);
-  data.mock = !Object.values(sources).includes('live');
+
+  // Estimated fallback: for a client the service account can't reach, a prior
+  // "sync" may have stored third-party estimates (by URL). Surface them only
+  // where there is no LIVE Google data, and mark those sources as 'estimated'
+  // so the UI never passes an estimate off as a real GSC/GA4 number.
+  const est = client.estimates;
+  if (est) {
+    if (sources.ga4 !== 'live' && est.organicTrafficEst != null) {
+      data.overview.organicTraffic.value = est.organicTrafficEst;
+      sources.ga4 = 'estimated';
+    }
+    if (sources.gsc !== 'live' && est.keywordsEst != null) {
+      data.overview.keywords.value = est.keywordsEst;
+      sources.gsc = 'estimated';
+    }
+    if (est.domainAuthorityEst != null) data.overview.domainAuthority.value = est.domainAuthorityEst;
+    if (est.organicValueEst != null) data.overview.organicValue.value = est.organicValueEst;
+    data.estimates = est;
+  }
+
+  const srcVals = Object.values(sources);
+  data.live = srcVals.includes('live');
+  data.hasEstimates = srcVals.includes('estimated');
+  data.mock = !data.live && !data.hasEstimates;
   data.sources = sources;
   data.sourceErrors = errors;
   return data;
@@ -325,6 +349,7 @@ function resolveGroupSite(client, requestedSiteId) {
     name: sel.name,
     url: sel.url,
     google: sel.google || client.google,
+    estimates: sel.estimates || null,
   };
   const group = {
     name: client.name,
@@ -564,6 +589,33 @@ app.post('/api/refresh', auth, requireAdmin, (_req, res) => {
 
 // Refresh status (any logged-in user) — lets the UI show "last updated".
 app.get('/api/refresh/status', auth, (_req, res) => res.json(refreshState));
+
+// ---------- Sync: connect sites to real Google data, estimate the rest ----------
+// PHASE A maps clients to the GSC sites / GA4 properties the service account can
+// see (sample → live). PHASE B fills the still-unconnected ones with clearly
+// labeled third-party estimates (by URL). Single-flighted like the refresh job.
+let syncState = { running: false, lastRun: null, lastResult: null };
+
+app.get('/api/sync/status', auth, (_req, res) =>
+  res.json({ ...syncState, readiness: syncReadiness() })
+);
+
+app.post('/api/sync', auth, requireAdmin, async (_req, res) => {
+  if (syncState.running) return res.status(409).json({ error: 'A sync is already running', state: syncState });
+  syncState.running = true;
+  const startedAt = new Date().toISOString();
+  try {
+    const result = await runSync({ read, write, clientsFile: CLIENTS_FILE });
+    syncState.lastRun = startedAt;
+    syncState.lastResult = result;
+    res.json({ ok: true, result });
+  } catch (e) {
+    syncState.lastResult = { error: e.message, startedAt, finishedAt: new Date().toISOString() };
+    res.status(500).json({ error: 'Sync failed: ' + e.message });
+  } finally {
+    syncState.running = false;
+  }
+});
 
 app.get('/api/health', (_req, res) =>
   res.json({ ok: true, groq: Boolean(GROQ_API_KEY), google: googleConfigured(), autoRefresh: AUTO_REFRESH })

@@ -234,6 +234,49 @@ function renderPortfolioTable() {
 }
 $('#client-filter')?.addEventListener('input', renderPortfolioTable);
 $('#client-sort')?.addEventListener('change', renderPortfolioTable);
+// Typing "sync" and pressing Enter in the filter box runs a sync, as the user asked.
+$('#client-filter')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && e.target.value.trim().toLowerCase() === 'sync') {
+    e.preventDefault(); e.target.value = ''; renderPortfolioTable(); runSync();
+  }
+});
+$('#sync-btn')?.addEventListener('click', runSync);
+
+// Sync: Phase A connects sites to real Google data; Phase B estimates the rest.
+let syncing = false;
+async function runSync() {
+  if (syncing) return;
+  syncing = true;
+  const btn = $('#sync-btn');
+  const prevLabel = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Syncing…'; }
+  const status = $('#google-status');
+  const prevStatus = status ? { cls: status.className, txt: status.textContent } : null;
+  if (status) { status.className = 'pill pill-est'; status.textContent = 'Syncing — reading Google & estimating…'; }
+  try {
+    const { result } = await api('/api/sync', { method: 'POST' });
+    await loadPortfolio();
+    showSyncSummary(result);
+  } catch (e) {
+    if (status && prevStatus) { status.className = prevStatus.cls; status.textContent = prevStatus.txt; }
+    alert('Sync failed: ' + e.message);
+  } finally {
+    syncing = false;
+    if (btn) { btn.disabled = false; btn.textContent = prevLabel || 'Sync'; }
+  }
+}
+
+function showSyncSummary(r) {
+  if (!r) return;
+  const a = r.phaseA || {}, b = r.phaseB || {};
+  const lines = [];
+  lines.push(`Connected to real Google data: ${a.gscMatched || 0} Search Console, ${a.ga4Matched || 0} GA4.`);
+  if (a.skipped) lines.push('• Real data: ' + a.skipped);
+  if (b.estimated) lines.push(`Estimated (by URL) for ${b.estimated} more site(s)${b.provider ? ' via ' + b.provider : ''}.`);
+  if (b.failed) lines.push(`• ${b.failed} site(s) had no estimate available.`);
+  if (b.skipped) lines.push('• Estimates: ' + b.skipped);
+  alert('Sync complete.\n\n' + lines.join('\n'));
+}
 $('#portfolio-table').addEventListener('click', (e) => {
   const row = e.target.closest('[data-client]');
   if (row) openReport(row.dataset.client);
@@ -342,9 +385,13 @@ async function openReport(id, siteId = null) {
 }
 
 function sourceBadge(key) {
-  const live = state.currentData?.sources?.[key] === 'live';
-  return `<span class="pill ${live ? 'pill-live' : 'pill-mock'}" style="font-size:11px">${live ? 'Live' : 'Sample'}</span>`;
+  const src = state.currentData?.sources?.[key];
+  const cls = src === 'live' ? 'pill-live' : src === 'estimated' ? 'pill-est' : 'pill-mock';
+  const label = src === 'live' ? 'Live' : src === 'estimated' ? 'Estimated' : 'Sample';
+  return `<span class="pill ${cls}" style="font-size:11px">${label}</span>`;
 }
+// Connector-row status text for a resolved source.
+const srcLabel = (src) => src === 'live' ? 'Live' : src === 'estimated' ? 'Estimated' : 'Sample data';
 
 // Every report section, in scroll order. [key, nav label, icon].
 const REPORT_SECTIONS = [
@@ -370,7 +417,8 @@ function sectionBody(key, d) {
 function renderReport() {
   const c = state.currentClient, d = state.currentData, g = state.currentGroup;
   const title = g ? g.name : c.name;
-  const overallLive = !d.mock;
+  const overallCls = d.live ? 'pill-live' : d.hasEstimates ? 'pill-est' : 'pill-mock';
+  const overallLabel = d.live ? 'Live data' : d.hasEstimates ? 'Estimated data' : 'Sample data';
   const rangeOptions = Object.entries(RANGE_LABEL)
     .map(([k, label]) => `<option value="${k}" ${k === state.currentRange ? 'selected' : ''}>${label}</option>`).join('');
   // For a grouped profile, a pill row lets you switch between the bundled sites;
@@ -389,7 +437,7 @@ function renderReport() {
         </div>
       </div>
       <div class="report-actions">
-        <span class="pill ${overallLive ? 'pill-live' : 'pill-mock'}">${overallLive ? 'Live data' : 'Sample data'}</span>
+        <span class="pill ${overallCls}">${overallLabel}</span>
         ${isAdmin() ? `<button class="btn btn-sm" id="connect-google-btn">${svg('plug')} Connect data</button>` : ''}
       </div>
     </div>
@@ -546,13 +594,13 @@ function connectorsPanel(d) {
   return `<div class="widget">
     <div class="widget-head"><h3>Data connectors</h3><span class="muted small">${isAdmin() ? 'Toggle a source to include or hide it across this report.' : 'Which data sources are feeding this report.'}</span></div>
     <div class="conn-grid">
-      ${item('googleSearchConsole', 'Search Console', 'search', d.sources.gsc === 'live' ? 'Live' : 'Sample data')}
-      ${item('googleAnalytics', 'Google Analytics 4', 'traffic', d.sources.ga4 === 'live' ? 'Live' : 'Sample data')}
-      ${item('googleBusinessProfile', 'GMB (Business Profile)', 'business', d.sources.gbp === 'live' ? 'Live' : 'Sample data')}
-      ${item('pageSpeed', 'PageSpeed / CrUX', 'gauge', d.sources.crux === 'live' ? 'Live' : 'Sample data')}
+      ${item('googleSearchConsole', 'Search Console', 'search', srcLabel(d.sources.gsc))}
+      ${item('googleAnalytics', 'Google Analytics 4', 'traffic', srcLabel(d.sources.ga4))}
+      ${item('googleBusinessProfile', 'GMB (Business Profile)', 'business', srcLabel(d.sources.gbp))}
+      ${item('pageSpeed', 'PageSpeed / CrUX', 'gauge', srcLabel(d.sources.crux))}
       ${item('ahrefs', 'Ahrefs (backlinks)', 'link', cn.ahrefs ? 'Enabled' : 'Off')}
       ${item('semrush', 'SEMrush (competitors)', 'traffic', cn.semrush ? 'Enabled' : 'Off')}
-      ${item('brightlocal', 'BrightLocal (local SEO)', 'brightlocal', d.sources.bl === 'live' ? 'Live' : 'Sample data')}
+      ${item('brightlocal', 'BrightLocal (local SEO)', 'brightlocal', srcLabel(d.sources.bl))}
       ${item('meta', 'Meta (Facebook / Instagram)', 'meta', cn.meta ? 'Enabled' : 'Off')}
       ${item('moz', 'Moz (domain authority)', 'moz', cn.moz ? 'Enabled' : 'Off')}
       ${item('googleads', 'Google Ads (paid search)', 'googleads', cn.googleads ? 'Enabled' : 'Off')}
