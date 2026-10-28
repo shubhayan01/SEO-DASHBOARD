@@ -8,9 +8,16 @@
 //   PHASE B (est.):  for clients STILL without a real GSC/GA4 mapping, pull
 //                    estimated metrics by URL from a third-party provider and
 //                    stash them on client.estimates, clearly labeled "estimated".
+//   PHASE C (synth): opt-in per owner. For clients STILL without real Google
+//                    data, generate a full, realistic, self-consistent dataset
+//                    (seeded per site) and mark it to render as "live". No
+//                    external calls. Used for the Justwords workspace, whose
+//                    own sites have no service-account grant — the owner asked
+//                    for realistic live-style figures instead of "Sample".
+//                    When Phase C runs it replaces Phase B for that owner.
 //
-// Nothing is fabricated: a site with no Google grant and no estimates provider
-// simply stays on sample data, and the report says so.
+// Outside Phase C nothing is fabricated: a site with no Google grant and no
+// estimates provider simply stays on sample data, and the report says so.
 
 import { googleConfigured, listSearchConsoleSites, listGA4Properties } from './google.js';
 import { estimatesConfigured, estimatesProviders, fetchEstimates } from './estimates.js';
@@ -33,6 +40,8 @@ function targetsOf(client) {
       get: () => (s.google = s.google || {}),
       hasReal: () => Boolean(s.google?.gscSiteUrl || s.google?.ga4PropertyId),
       setEstimates: (e) => { s.estimates = e; },
+      hasSynthetic: () => Boolean(s.synthetic),
+      setSynthetic: (v) => { s.synthetic = v; },
     }));
   }
   return [{
@@ -40,7 +49,14 @@ function targetsOf(client) {
     get: () => (client.google = client.google || {}),
     hasReal: () => Boolean(client.google?.gscSiteUrl || client.google?.ga4PropertyId),
     setEstimates: (e) => { client.estimates = e; },
+    hasSynthetic: () => Boolean(client.synthetic),
+    setSynthetic: (v) => { client.synthetic = v; },
   }];
+}
+
+// A stable-ish random seed string for a freshly synthesized site.
+function newSynthSeed() {
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
 function matchGsc(sites, url) {
@@ -64,7 +80,7 @@ export function syncReadiness() {
  * start and write once at the end so a concurrent edit isn't clobbered mid-run.
  * Returns a detailed, honest report of what happened.
  */
-export async function runSync({ read, write, clientsFile }) {
+export async function runSync({ read, write, clientsFile, owner = null, synthetic = false }) {
   const startedAt = new Date().toISOString();
   const report = {
     startedAt, finishedAt: null,
@@ -72,16 +88,20 @@ export async function runSync({ read, write, clientsFile }) {
     estimatesConfigured: estimatesConfigured(),
     phaseA: { gscMatched: 0, ga4Matched: 0, details: [], skipped: null },
     phaseB: { estimated: 0, failed: 0, provider: null, details: [], skipped: null },
+    phaseC: { synthesized: 0, details: [], skipped: null },
   };
 
   const clients = read(clientsFile);
+  // When an owner is given, only that tenant's clients are touched (the whole
+  // file is still written back, so other tenants are left exactly as they were).
+  const scoped = owner ? clients.filter((c) => (c.owner || 'agency') === owner) : clients;
 
   // ---------- PHASE A: real GSC/GA4 discovery + mapping ----------
   if (!googleConfigured()) {
     report.phaseA.skipped = 'Google service account not configured — no real data to map.';
   } else {
     const [gscSites, ga4Props] = await Promise.all([listSearchConsoleSites(), listGA4Properties()]);
-    for (const client of clients) {
+    for (const client of scoped) {
       for (const t of targetsOf(client)) {
         const g = t.get();
         if (!g.gscSiteUrl) {
@@ -98,12 +118,32 @@ export async function runSync({ read, write, clientsFile }) {
     }
   }
 
+  // ---------- PHASE C: synthetic "live" data (opt-in per owner) ----------
+  // For an owner that opted in (Justwords), every site still lacking real
+  // Google data gets a realistic, self-consistent dataset rendered as "live".
+  // This replaces Phase B for that owner and makes no external calls.
+  if (synthetic) {
+    report.phaseB.skipped = 'Synthetic mode on for this workspace — Phase B (estimates) skipped.';
+    for (const client of scoped) {
+      for (const t of targetsOf(client)) {
+        if (t.hasReal() || t.hasSynthetic()) continue; // keep existing numbers stable on re-sync
+        t.setSynthetic({ seed: newSynthSeed(), generatedAt: new Date().toISOString() });
+        report.phaseC.synthesized++;
+        report.phaseC.details.push({ client: t.name });
+      }
+    }
+    write(clientsFile, clients);
+    report.finishedAt = new Date().toISOString();
+    return report;
+  }
+  report.phaseC.skipped = 'Synthetic mode off for this workspace.';
+
   // ---------- PHASE B: estimated metrics for the still-unconnected ----------
   if (!estimatesConfigured()) {
     report.phaseB.skipped = 'No estimates provider configured — unconnected sites stay on sample data.';
   } else {
     const pending = [];
-    for (const client of clients)
+    for (const client of scoped)
       for (const t of targetsOf(client))
         if (!t.hasReal()) pending.push(t);
 

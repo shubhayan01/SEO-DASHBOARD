@@ -4,6 +4,7 @@
     "email": "admin@agency.com",
     "role": "admin",
     "clientId": null,
+    "owner": "agency",
     "passwordHash": "$2a$10$qv6zKqFph8iA8kN5OMmls.IwakR/9X2RtLIYUM5yg8CBJ7/2f6SCm"
   },
   {
@@ -191,8 +192,9 @@
   {
     "id": "43036a9c-f8a8-4bfe-af0e-a77e071acf86",
     "email": "justwords@admin",
-    "role": "client",
-    "clientId": "ecd5dae6-cb7f-4f51-a901-59d5ffafe1de",
+    "role": "admin",
+    "clientId": null,
+    "owner": "justwords",
     "passwordHash": "$2a$10$pPKLHLERaEaD5txlR9ZqKOEDY.ZIVw15vkmHRnOSmwUXLzjJTHFvG"
   }
 ]

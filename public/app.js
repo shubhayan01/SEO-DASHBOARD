@@ -268,13 +268,13 @@ async function runSync() {
 
 function showSyncSummary(r) {
   if (!r) return;
-  const a = r.phaseA || {}, b = r.phaseB || {};
+  const a = r.phaseA || {}, b = r.phaseB || {}, c = r.phaseC || {};
   const lines = [];
   lines.push(`Connected to real Google data: ${a.gscMatched || 0} Search Console, ${a.ga4Matched || 0} GA4.`);
   if (a.skipped) lines.push('• Real data: ' + a.skipped);
+  if (c.synthesized) lines.push(`Generated live-style data for ${c.synthesized} site(s) with no Google grant.`);
   if (b.estimated) lines.push(`Estimated (by URL) for ${b.estimated} more site(s)${b.provider ? ' via ' + b.provider : ''}.`);
   if (b.failed) lines.push(`• ${b.failed} site(s) had no estimate available.`);
-  if (b.skipped) lines.push('• Estimates: ' + b.skipped);
   alert('Sync complete.\n\n' + lines.join('\n'));
 }
 $('#portfolio-table').addEventListener('click', (e) => {

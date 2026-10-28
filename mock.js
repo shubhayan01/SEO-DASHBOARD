@@ -23,6 +23,15 @@ function rng(seed) {
 }
 
 const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
+// Deterministic Fisher–Yates shuffle (uses the seeded rng), returns a new array.
+const shuffle = (r, arr) => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(r() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
 const intBetween = (r, lo, hi) => Math.floor(lo + r() * (hi - lo));
 const round = (n) => Math.round(n);
 const pct = (r, lo, hi) => +(lo + r() * (hi - lo)).toFixed(1);
@@ -61,19 +70,36 @@ const KEYWORD_TEMPLATES = [
   'cheap {b} servicses', '{b} near me', '{b} tutorial', 'free {b} trial',
 ];
 
-export function generateDashboard(client, connectors = {}) {
+export function generateDashboard(client, connectors = {}, opts = {}) {
   const domain = domainOf(client.url);
-  const brand = domain.split('.')[0];
-  const r = rng(seedFrom(client.id || client.url || 'seed'));
+  // `opts.profile` (see profiles.js) tailors the data to a specific real site:
+  // its niche keywords, real page URLs, geography, GBP locale and realistic
+  // magnitude anchors — so a "synthetic live" sync looks real for THAT site.
+  const p = opts.profile || null;
+  const brand = p?.brand || domain.split('.')[0];
+  // `opts.seed` lets a caller reseed the whole dashboard (e.g. a "synthetic
+  // live" sync) so the numbers are realistic but distinct from the original
+  // sample figures; otherwise we seed deterministically from the client id.
+  const r = rng(seedFrom(opts.seed != null ? String(opts.seed) : (client.id || client.url || 'seed')));
 
-  // ---- Overview KPIs ----
-  const traffic = intBetween(r, 1200, 145000);
-  const keywords = intBetween(r, 180, 7800);
-  const backlinks = intBetween(r, 400, 210000);
-  const refDomains = intBetween(r, 60, 4200);
-  const da = intBetween(r, 18, 72);
-  const avgPos = pct(r, 6, 34);
+  // Vary a profile anchor by ±~18% so figures look organic but stay plausible.
+  const vary = (base, lo = 0.82, hi = 1.18) => round(base * (lo + r() * (hi - lo)));
+
+  // ---- Overview KPIs (profile anchors when present, else generic ranges) ----
+  const traffic = p?.trafficBase ? vary(p.trafficBase) : intBetween(r, 1200, 145000);
+  const keywords = p?.keywordsBase ? vary(p.keywordsBase) : intBetween(r, 180, 7800);
+  const backlinks = p ? vary((p.keywordsBase || 1000) * 7, 0.7, 1.3) : intBetween(r, 400, 210000);
+  const refDomains = p ? vary((p.keywordsBase || 1000) * 0.85, 0.7, 1.3) : intBetween(r, 60, 4200);
+  const da = p?.daBase ? Math.min(92, Math.max(5, round(p.daBase + (r() - 0.5) * 8))) : intBetween(r, 18, 72);
+  const avgPos = p?.avgPos ? pct(r, p.avgPos[0], p.avgPos[1]) : pct(r, 6, 34);
   const organicValue = round(traffic * (0.4 + r() * 1.8));
+
+  // Niche keyword pools (two independent shuffles so tracked keywords and top
+  // queries differ, as they do in reality); fall back to generic templates.
+  const kwRank = p?.keywords?.length ? shuffle(r, p.keywords) : null;
+  const kwQuery = p?.keywords?.length ? shuffle(r, p.keywords) : null;
+  // Real page list for this site (path + label), else generic SaaS-style paths.
+  const pageDefs = p?.pages?.length ? p.pages : null;
 
   const trend = (base, months, volatility, growth) => {
     const vals = [];
@@ -116,9 +142,14 @@ export function generateDashboard(client, connectors = {}) {
   const usedKw = new Set();
   const keywordRankings = [];
   for (let i = 0; i < 12; i++) {
-    let tmpl = pick(r, KEYWORD_TEMPLATES);
-    let kw = tmpl.replace('{b}', brand);
-    while (usedKw.has(kw)) kw = pick(r, KEYWORD_TEMPLATES).replace('{b}', brand) + ' ' + i;
+    let kw;
+    if (kwRank) {
+      kw = kwRank[i % kwRank.length];
+      if (usedKw.has(kw)) kw = kw + ' ' + i;
+    } else {
+      kw = pick(r, KEYWORD_TEMPLATES).replace('{b}', brand);
+      while (usedKw.has(kw)) kw = pick(r, KEYWORD_TEMPLATES).replace('{b}', brand) + ' ' + i;
+    }
     usedKw.add(kw);
     const position = intBetween(r, 1, 60);
     const prev = Math.max(1, position + intBetween(r, -8, 8));
@@ -159,9 +190,13 @@ export function generateDashboard(client, connectors = {}) {
   };
 
   // ---- Top pages ----
-  const pagePaths = ['/', '/pricing', '/blog', '/features', '/about', '/contact', '/blog/guide', '/product'];
-  const topPages = pagePaths.slice(0, 6).map((p) => ({
-    path: p,
+  const pagePaths = pageDefs
+    ? pageDefs.map((pg) => pg.path)
+    : ['/', '/pricing', '/blog', '/features', '/about', '/contact', '/blog/guide', '/product'];
+  const pageLabelOf = (path) => (pageDefs ? (pageDefs.find((pg) => pg.path === path)?.label || null) : null);
+  const topPages = pagePaths.slice(0, 6).map((path) => ({
+    path,
+    label: pageLabelOf(path),
     traffic: round(lastTraffic * (0.05 + r() * 0.25)),
     keywords: intBetween(r, 5, 400),
     changePct: pct(r, -20, 40),
@@ -177,20 +212,23 @@ export function generateDashboard(client, connectors = {}) {
     newThisMonth: intBetween(r, 10, 900),
     lostThisMonth: intBetween(r, 5, 400),
     domainRating: da,
-    topReferring: Array.from({ length: 6 }).map(() => {
-      const dr = intBetween(r, 20, 92);
-      return {
-        domain: pick(r, ['forbes.com', 'medium.com', 'reddit.com', 'techcrunch.com', 'wikipedia.org',
-          'g2.com', 'producthunt.com', 'quora.com', 'hubspot.com', 'wordpress.org']),
-        dr,
+    topReferring: (() => {
+      const pool = p?.referringDomains?.length
+        ? shuffle(r, p.referringDomains)
+        : shuffle(r, ['forbes.com', 'medium.com', 'reddit.com', 'techcrunch.com', 'wikipedia.org',
+          'g2.com', 'producthunt.com', 'quora.com', 'hubspot.com', 'wordpress.org']);
+      return pool.slice(0, 6).map((domain) => ({
+        domain,
+        dr: intBetween(r, 20, 92),
         backlinks: intBetween(r, 1, 320),
-      };
-    }),
+      }));
+    })(),
   };
 
   // ---- Competitors (SEMrush) ----
+  const compDomains = p?.competitors?.length ? p.competitors : null;
   const competitors = Array.from({ length: 4 }).map((_, i) => ({
-    domain: `competitor${i + 1}.com`,
+    domain: compDomains ? (compDomains[i % compDomains.length]) : `competitor${i + 1}.com`,
     domainAuthority: intBetween(r, da - 12, da + 15),
     commonKeywords: intBetween(r, 40, 2200),
     estTraffic: intBetween(r, 800, 180000),
@@ -201,8 +239,14 @@ export function generateDashboard(client, connectors = {}) {
   const usedQ = new Set();
   const topQueries = [];
   for (let i = 0; i < 10; i++) {
-    let q = pick(r, KEYWORD_TEMPLATES).replace('{b}', brand);
-    while (usedQ.has(q)) q = pick(r, KEYWORD_TEMPLATES).replace('{b}', brand) + ' ' + i;
+    let q;
+    if (kwQuery) {
+      q = kwQuery[i % kwQuery.length];
+      if (usedQ.has(q)) q = q + ' ' + i;
+    } else {
+      q = pick(r, KEYWORD_TEMPLATES).replace('{b}', brand);
+      while (usedQ.has(q)) q = pick(r, KEYWORD_TEMPLATES).replace('{b}', brand) + ' ' + i;
+    }
     usedQ.add(q);
     const impressions = intBetween(r, 200, 60000);
     const qctr = pct(r, 0.6, 12);
@@ -217,13 +261,24 @@ export function generateDashboard(client, connectors = {}) {
   topQueries.sort((a, b) => b.clicks - a.clicks);
 
   // ---- Search Console: geography + device split ----
-  const COUNTRIES = ['United States', 'United Kingdom', 'India', 'Germany', 'Canada', 'Australia', 'France', 'Brazil'];
-  let geoRemaining = 100;
-  const gscCountries = COUNTRIES.slice(0, 6).map((name, i, arr) => {
-    const share = i === arr.length - 1 ? +geoRemaining.toFixed(1) : +(geoRemaining * (0.28 + r() * 0.3)).toFixed(1);
-    geoRemaining = Math.max(0, geoRemaining - share);
-    return { country: name, clicks: round(searchConsole.clicks * (share / 100)), share };
-  });
+  let gscCountries;
+  if (p?.countries?.length) {
+    // Honor the profile's geography mix (e.g. India-dominant), lightly jittered.
+    const weighted = p.countries.map(([country, w]) => [country, w * (0.9 + r() * 0.2)]);
+    const total = weighted.reduce((s, [, w]) => s + w, 0);
+    gscCountries = weighted.map(([country, w]) => {
+      const share = +((w / total) * 100).toFixed(1);
+      return { country, clicks: round(searchConsole.clicks * (w / total)), share };
+    }).sort((a, b) => b.share - a.share);
+  } else {
+    const COUNTRIES = ['United States', 'United Kingdom', 'India', 'Germany', 'Canada', 'Australia', 'France', 'Brazil'];
+    let geoRemaining = 100;
+    gscCountries = COUNTRIES.slice(0, 6).map((name, i, arr) => {
+      const share = i === arr.length - 1 ? +geoRemaining.toFixed(1) : +(geoRemaining * (0.28 + r() * 0.3)).toFixed(1);
+      geoRemaining = Math.max(0, geoRemaining - share);
+      return { country: name, clicks: round(searchConsole.clicks * (share / 100)), share };
+    });
+  }
   const dDesktop = pct(r, 38, 66);
   const dMobile = +(100 - dDesktop - 6).toFixed(1);
   const gscDevices = [
@@ -368,13 +423,18 @@ export function generateDashboard(client, connectors = {}) {
     'Helpful staff and fair pricing. Very happy with the result.',
     'Solid work, would use again. Booking was easy and hassle-free.',
   ];
+  const isIN = p?.gbp?.phoneCc === '+91';
   const gbp = {
     profile: {
       name: client.name,
-      category: pick(r, CATEGORIES),
+      category: p?.gbp?.category || pick(r, CATEGORIES),
       verified: r() > 0.15,
-      address: `${intBetween(r, 10, 990)} ${pick(r, ['Main', 'High', 'Market', 'Park', 'Oak', 'King'])} St`,
-      phone: `+1 (${intBetween(r, 201, 989)}) ${intBetween(r, 200, 999)}-${String(intBetween(r, 0, 9999)).padStart(4, '0')}`,
+      address: p?.gbp?.city
+        ? `${intBetween(r, 10, 990)} ${p.gbp.street}, ${p.gbp.city}`
+        : `${intBetween(r, 10, 990)} ${pick(r, ['Main', 'High', 'Market', 'Park', 'Oak', 'King'])} St`,
+      phone: isIN
+        ? `+91 ${intBetween(r, 70, 99)}${String(intBetween(r, 0, 99999999)).padStart(8, '0')}`
+        : `+1 (${intBetween(r, 201, 989)}) ${intBetween(r, 200, 999)}-${String(intBetween(r, 0, 9999)).padStart(4, '0')}`,
       hours: pick(r, ['Open now · Closes 6 PM', 'Open now · Closes 9 PM', 'Closed · Opens 9 AM']),
     },
     reach: {
@@ -425,12 +485,15 @@ export function generateDashboard(client, connectors = {}) {
         { stars: 2, value: round(reviewCount * (0.02 + r() * 0.03)) },
         { stars: 1, value: round(reviewCount * (0.02 + r() * 0.05)) },
       ],
-      recent: Array.from({ length: 4 }).map(() => ({
-        author: pick(r, ['A. Sharma', 'J. Miller', 'S. Patel', 'M. Garcia', 'R. Chen', 'K. Brown', 'L. Rossi']),
-        rating: intBetween(r, 3, 6) > 5 ? 5 : intBetween(r, 3, 6),
-        text: pick(r, REVIEW_SNIPPETS),
-        daysAgo: intBetween(r, 1, 40),
-      })),
+      recent: (() => {
+        const authors = shuffle(r, p?.reviewAuthors || ['A. Sharma', 'J. Miller', 'S. Patel', 'M. Garcia', 'R. Chen', 'K. Brown', 'L. Rossi']);
+        return Array.from({ length: 4 }).map((_, i) => ({
+          author: authors[i % authors.length], // distinct reviewers
+          rating: intBetween(r, 3, 6) > 5 ? 5 : intBetween(r, 3, 6),
+          text: pick(r, REVIEW_SNIPPETS),
+          daysAgo: intBetween(r, 1, 40),
+        }));
+      })(),
     },
     photos: {
       customerViews: intBetween(r, 500, 320000),

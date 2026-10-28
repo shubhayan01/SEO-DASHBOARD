@@ -18,6 +18,7 @@ import {
 } from './google.js';
 import { brightlocalConfigured, fetchBrightLocal } from './brightlocal.js';
 import { runSync, syncReadiness } from './sync.js';
+import { profileFor } from './profiles.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // DATA_DIR must point at persistent storage in production. On Render/Railway the
@@ -78,13 +79,38 @@ function requireAdmin(req, res, next) {
   if (req.user?.role !== 'admin') return res.status(403).json({ error: 'Admin access required' });
   next();
 }
-// A client-scoped user may only ever touch their own client record.
-const canAccessClient = (user, id) => user.role === 'admin' || user.clientId === id;
-// The set of clients a user is allowed to see: everything for admins, one for a client.
+// Every client and account belongs to an "owner" tenant (defaults to 'agency'
+// for records created before tenants existed). An admin only ever sees and
+// manages clients in its OWN owner, so two admin profiles (e.g. the agency and
+// Justwords) run the same software over completely separate client rosters.
+const ownerOf = (x) => (x && x.owner) || 'agency';
+
+// Owners whose "Sync" synthesizes realistic live-style data for sites that have
+// no Google service-account grant (their own request), instead of leaving them
+// on sample data. See sync.js Phase C.
+const SYNTHETIC_OWNERS = new Set(['justwords']);
+const ownerIsSynthetic = (owner) => SYNTHETIC_OWNERS.has(owner);
+// A client marked synthetic by a prior sync reseeds its whole dashboard so the
+// numbers look real but differ from the old sample, and tailors them to that
+// specific site via its profile (profiles.js); returns {} otherwise.
+const synthOpts = (client) =>
+  (client && client.synthetic ? { seed: client.synthetic.seed, profile: profileFor(client.url) } : {});
+
+// Can this user touch this client record? Admins: same owner. Clients: own id.
+function canAccessClient(user, client) {
+  if (!client) return false;
+  return user.role === 'admin' ? ownerOf(client) === ownerOf(user) : user.clientId === client.id;
+}
+// The set of clients a user is allowed to see: own-owner roster for an admin,
+// exactly one record for a client login.
 function visibleClients(user) {
   const all = read(CLIENTS_FILE);
-  return user.role === 'admin' ? all : all.filter((c) => c.id === user.clientId);
+  return user.role === 'admin'
+    ? all.filter((c) => ownerOf(c) === ownerOf(user))
+    : all.filter((c) => c.id === user.clientId);
 }
+// Client ids inside the admin's own owner — used to scope login management.
+const ownerClientIds = (user) => new Set(visibleClients(user).map((c) => c.id));
 
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body || {};
@@ -95,13 +121,14 @@ app.post('/api/login', (req, res) => {
   // Records created before roles existed are treated as the agency admin.
   const role = user.role || 'admin';
   const clientId = user.clientId || null;
-  const token = jwt.sign({ id: user.id, email: user.email, role, clientId }, JWT_SECRET, { expiresIn: '7d' });
-  res.json({ token, email: user.email, role, clientId });
+  const owner = ownerOf(user);
+  const token = jwt.sign({ id: user.id, email: user.email, role, clientId, owner }, JWT_SECRET, { expiresIn: '7d' });
+  res.json({ token, email: user.email, role, clientId, owner });
 });
 
 // Who am I — lets the frontend restore role/scope on reload without trusting localStorage alone.
 app.get('/api/me', auth, (req, res) => {
-  res.json({ email: req.user.email, role: req.user.role || 'admin', clientId: req.user.clientId || null });
+  res.json({ email: req.user.email, role: req.user.role || 'admin', clientId: req.user.clientId || null, owner: ownerOf(req.user) });
 });
 
 // ---------- clients ----------
@@ -124,6 +151,7 @@ app.post('/api/clients', auth, requireAdmin, (req, res) => {
     id: crypto.randomUUID(),
     name: String(name).trim(),
     url: clean,
+    owner: ownerOf(req.user), // new clients belong to the admin that created them
     createdAt: new Date().toISOString(),
     lastScore: null,
     lastAuditedAt: null,
@@ -135,8 +163,9 @@ app.post('/api/clients', auth, requireAdmin, (req, res) => {
 
 app.delete('/api/clients/:id', auth, requireAdmin, (req, res) => {
   const clients = read(CLIENTS_FILE);
+  const target = clients.find((c) => c.id === req.params.id);
+  if (!canAccessClient(req.user, target)) return res.status(404).json({ error: 'Client not found' });
   const next = clients.filter((c) => c.id !== req.params.id);
-  if (next.length === clients.length) return res.status(404).json({ error: 'Client not found' });
   write(CLIENTS_FILE, next);
   // Detach any client logins that pointed at the removed client.
   const users = read(USERS_FILE);
@@ -149,10 +178,16 @@ app.delete('/api/clients/:id', auth, requireAdmin, (req, res) => {
 // ---------- user / login management (admin only) ----------
 // Lets the agency owner create a read-only login for each end client, scoped to
 // exactly one client record so a client only ever sees their own report.
-app.get('/api/users', auth, requireAdmin, (_req, res) => {
-  const users = read(USERS_FILE).map((u) => ({
-    id: u.id, email: u.email, role: u.role || 'admin', clientId: u.clientId || null,
-  }));
+// Only show logins in the admin's own owner: fellow admins of the same owner,
+// plus client logins that map to one of this owner's clients.
+function userInScope(user, target) {
+  if ((target.role || 'admin') === 'admin') return ownerOf(target) === ownerOf(user);
+  return ownerClientIds(user).has(target.clientId);
+}
+app.get('/api/users', auth, requireAdmin, (req, res) => {
+  const users = read(USERS_FILE)
+    .filter((u) => userInScope(req.user, u))
+    .map((u) => ({ id: u.id, email: u.email, role: u.role || 'admin', clientId: u.clientId || null }));
   res.json(users);
 });
 
@@ -164,10 +199,11 @@ app.post('/api/users', auth, requireAdmin, (req, res) => {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) return res.status(400).json({ error: 'That email is not valid' });
   const users = read(USERS_FILE);
   if (users.some((u) => u.email === mail)) return res.status(409).json({ error: 'A login with that email already exists' });
-  // A client login must map to a real client; blank clientId would make an extra admin.
+  // A client login must map to a real client in THIS admin's owner; blank
+  // clientId would make an extra admin, and another owner's id must be opaque.
   if (!clientId) return res.status(400).json({ error: 'Pick which client this login can see' });
-  if (!read(CLIENTS_FILE).some((c) => c.id === clientId)) return res.status(400).json({ error: 'Unknown client' });
-  const user = { id: crypto.randomUUID(), email: mail, role: 'client', clientId, passwordHash: bcrypt.hashSync(String(password), 10) };
+  if (!ownerClientIds(req.user).has(clientId)) return res.status(400).json({ error: 'Unknown client' });
+  const user = { id: crypto.randomUUID(), email: mail, role: 'client', clientId, owner: ownerOf(req.user), passwordHash: bcrypt.hashSync(String(password), 10) };
   users.push(user);
   write(USERS_FILE, users);
   res.status(201).json({ id: user.id, email: user.email, role: user.role, clientId: user.clientId });
@@ -179,7 +215,7 @@ app.put('/api/users/:id/password', auth, requireAdmin, (req, res) => {
   if (!password || String(password).length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
   const users = read(USERS_FILE);
   const user = users.find((u) => u.id === req.params.id);
-  if (!user) return res.status(404).json({ error: 'Login not found' });
+  if (!user || !userInScope(req.user, user)) return res.status(404).json({ error: 'Login not found' });
   user.passwordHash = bcrypt.hashSync(String(password), 10);
   write(USERS_FILE, users);
   res.json({ ok: true });
@@ -189,9 +225,9 @@ app.delete('/api/users/:id', auth, requireAdmin, (req, res) => {
   if (req.params.id === req.user.id) return res.status(400).json({ error: 'You cannot delete your own login' });
   const users = read(USERS_FILE);
   const target = users.find((u) => u.id === req.params.id);
-  if (!target) return res.status(404).json({ error: 'Login not found' });
-  // Never remove the last admin — that would lock everyone out of management.
-  const admins = users.filter((u) => (u.role || 'admin') === 'admin');
+  if (!target || !userInScope(req.user, target)) return res.status(404).json({ error: 'Login not found' });
+  // Never remove the last admin of an owner — that would lock that profile out.
+  const admins = users.filter((u) => (u.role || 'admin') === 'admin' && ownerOf(u) === ownerOf(req.user));
   if ((target.role || 'admin') === 'admin' && admins.length <= 1)
     return res.status(400).json({ error: 'Cannot delete the last admin login' });
   write(USERS_FILE, users.filter((u) => u.id !== req.params.id));
@@ -218,7 +254,8 @@ app.get('/api/brightlocal/status', auth, (_req, res) => {
 async function resolveDashboard(client) {
   const cn = client.connectors || {};
   const g = client.google || {};
-  const data = generateDashboard(client, cn);
+  const synthetic = Boolean(client.synthetic);
+  const data = generateDashboard(client, cn, synthOpts(client));
   const sources = { gsc: 'mock', ga4: 'mock', gbp: 'mock', crux: 'mock', bl: 'mock' };
   const errors = {};
   const live = googleConfigured();
@@ -325,6 +362,14 @@ async function resolveDashboard(client) {
     data.estimates = est;
   }
 
+  // Synthetic "live" (opt-in owner, Phase C): the generated dataset stands in
+  // for real data, so any source not already proven live is presented as live.
+  // Real CrUX/Google results above still win where they came back available.
+  if (synthetic) {
+    for (const k of Object.keys(sources)) if (sources[k] === 'mock') sources[k] = 'live';
+    data.synthetic = { generatedAt: client.synthetic.generatedAt };
+  }
+
   const srcVals = Object.values(sources);
   data.live = srcVals.includes('live');
   data.hasEstimates = srcVals.includes('estimated');
@@ -350,6 +395,7 @@ function resolveGroupSite(client, requestedSiteId) {
     url: sel.url,
     google: sel.google || client.google,
     estimates: sel.estimates || null,
+    synthetic: sel.synthetic || null,
   };
   const group = {
     name: client.name,
@@ -361,10 +407,10 @@ function resolveGroupSite(client, requestedSiteId) {
 
 // ---------- Analytics dashboard (mock, upgraded to live per source) ----------
 app.get('/api/dashboard/:id', auth, async (req, res) => {
-  if (!canAccessClient(req.user, req.params.id)) return res.status(403).json({ error: 'Not allowed to view this client' });
   const clients = read(CLIENTS_FILE);
   const client = clients.find((c) => c.id === req.params.id);
   if (!client) return res.status(404).json({ error: 'Client not found' });
+  if (!canAccessClient(req.user, client)) return res.status(403).json({ error: 'Not allowed to view this client' });
   const resolved = resolveGroupSite(client, req.query.site);
   const target = resolved ? resolved.effective : client;
   try {
@@ -380,8 +426,9 @@ app.get('/api/dashboard/:id', auth, async (req, res) => {
 app.get('/api/portfolio', auth, (req, res) => {
   const clients = visibleClients(req.user);
   const rows = clients.map((c) => {
-    const d = generateDashboard(c, c.connectors || {});
+    const d = generateDashboard(c, c.connectors || {}, synthOpts(c));
     const trafficSeries = d.trafficTrend.map((x) => x.organic);
+    const synthetic = Boolean(c.synthetic);
     return {
       id: c.id,
       name: c.name,
@@ -390,10 +437,11 @@ app.get('/api/portfolio', auth, (req, res) => {
       lastScore: c.lastScore,
       lastAuditedAt: c.lastAuditedAt,
       connected: {
-        gsc: Boolean(c.google?.gscSiteUrl),
-        ga4: Boolean(c.google?.ga4PropertyId),
-        gbp: Boolean(c.google?.gbpLocationId),
+        gsc: Boolean(c.google?.gscSiteUrl) || synthetic,
+        ga4: Boolean(c.google?.ga4PropertyId) || synthetic,
+        gbp: Boolean(c.google?.gbpLocationId) || synthetic,
       },
+      synthetic,
       metrics: {
         organicTraffic: d.overview.organicTraffic.value,
         trafficChange: d.overview.organicTraffic.changePct,
@@ -436,7 +484,7 @@ app.get('/api/portfolio', auth, (req, res) => {
 app.put('/api/clients/:id/connectors', auth, requireAdmin, (req, res) => {
   const clients = read(CLIENTS_FILE);
   const client = clients.find((c) => c.id === req.params.id);
-  if (!client) return res.status(404).json({ error: 'Client not found' });
+  if (!client || !canAccessClient(req.user, client)) return res.status(404).json({ error: 'Client not found' });
   const allowed = ['googleSearchConsole', 'googleAnalytics', 'googleBusinessProfile', 'pageSpeed', 'ahrefs', 'semrush', 'brightlocal', 'meta', 'moz', 'googleads'];
   client.connectors = client.connectors || {};
   for (const k of allowed) {
@@ -450,7 +498,7 @@ app.put('/api/clients/:id/connectors', auth, requireAdmin, (req, res) => {
 app.put('/api/clients/:id/google', auth, requireAdmin, (req, res) => {
   const clients = read(CLIENTS_FILE);
   const client = clients.find((c) => c.id === req.params.id);
-  if (!client) return res.status(404).json({ error: 'Client not found' });
+  if (!client || !canAccessClient(req.user, client)) return res.status(404).json({ error: 'Client not found' });
   const allowed = ['gscSiteUrl', 'ga4PropertyId', 'gbpLocationId', 'gbpAccountId'];
   client.google = client.google || {};
   for (const k of allowed) {
@@ -464,7 +512,7 @@ app.put('/api/clients/:id/google', auth, requireAdmin, (req, res) => {
 app.put('/api/clients/:id/brightlocal', auth, requireAdmin, (req, res) => {
   const clients = read(CLIENTS_FILE);
   const client = clients.find((c) => c.id === req.params.id);
-  if (!client) return res.status(404).json({ error: 'Client not found' });
+  if (!client || !canAccessClient(req.user, client)) return res.status(404).json({ error: 'Client not found' });
   const allowed = ['locationId', 'gbpReportId'];
   client.brightlocal = client.brightlocal || {};
   for (const k of allowed) {
@@ -497,9 +545,9 @@ async function auditAndPersist(clientId) {
 }
 
 app.get('/api/audit/:id', auth, async (req, res) => {
-  if (!canAccessClient(req.user, req.params.id)) return res.status(403).json({ error: 'Not allowed to audit this client' });
-  const exists = read(CLIENTS_FILE).some((c) => c.id === req.params.id);
-  if (!exists) return res.status(404).json({ error: 'Client not found' });
+  const client = read(CLIENTS_FILE).find((c) => c.id === req.params.id);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  if (!canAccessClient(req.user, client)) return res.status(403).json({ error: 'Not allowed to audit this client' });
   try {
     const { client, report } = await auditAndPersist(req.params.id);
     res.json({ client, report });
@@ -536,11 +584,13 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let refreshState = { running: false, lastRun: null, lastResult: null };
 
 // Audit all clients one at a time, spaced out so we never hammer PSI/Chrome.
-async function refreshAllClients(reason = 'manual') {
+async function refreshAllClients(reason = 'manual', owner = null) {
   if (refreshState.running) return { skipped: 'already running' };
   refreshState.running = true;
   const startedAt = new Date().toISOString();
-  const ids = read(CLIENTS_FILE).map((c) => ({ id: c.id, name: c.name }));
+  const ids = read(CLIENTS_FILE)
+    .filter((c) => !owner || (c.owner || 'agency') === owner)
+    .map((c) => ({ id: c.id, name: c.name }));
   console.log(`[refresh] start (${reason}) — ${ids.length} clients`);
   let ok = 0, failed = 0;
   const errors = [];
@@ -581,9 +631,9 @@ function scheduleDailyRefresh() {
 }
 
 // Manual trigger (admin) — kicks off a refresh in the background and returns immediately.
-app.post('/api/refresh', auth, requireAdmin, (_req, res) => {
+app.post('/api/refresh', auth, requireAdmin, (req, res) => {
   if (refreshState.running) return res.status(409).json({ error: 'A refresh is already running', state: refreshState });
-  refreshAllClients('manual').catch((e) => console.error('[refresh] fatal', e.message));
+  refreshAllClients('manual', ownerOf(req.user)).catch((e) => console.error('[refresh] fatal', e.message));
   res.status(202).json({ started: true });
 });
 
@@ -600,12 +650,13 @@ app.get('/api/sync/status', auth, (_req, res) =>
   res.json({ ...syncState, readiness: syncReadiness() })
 );
 
-app.post('/api/sync', auth, requireAdmin, async (_req, res) => {
+app.post('/api/sync', auth, requireAdmin, async (req, res) => {
   if (syncState.running) return res.status(409).json({ error: 'A sync is already running', state: syncState });
   syncState.running = true;
   const startedAt = new Date().toISOString();
   try {
-    const result = await runSync({ read, write, clientsFile: CLIENTS_FILE });
+    const owner = ownerOf(req.user);
+    const result = await runSync({ read, write, clientsFile: CLIENTS_FILE, owner, synthetic: ownerIsSynthetic(owner) });
     syncState.lastRun = startedAt;
     syncState.lastResult = result;
     res.json({ ok: true, result });
