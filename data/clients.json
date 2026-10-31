@@ -8,7 +8,8 @@
     "lastScore": 87,
     "lastAuditedAt": "2026-09-15T04:41:00.847Z",
     "connectors": {
-      "semrush": false
+      "semrush": false,
+      "brightlocal": true
     },
     "google": {
       "gscSiteUrl": "https://bravoprotectionmn.com/",
@@ -17,6 +18,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=12944419523737964102",
       "gbpCid": "12944419523737964102"
+    },
+    "brightlocal": {
+      "locationId": "1836778",
+      "gbpReportId": "417534",
+      "snapshot": {
+        "reviews": 398,
+        "avgRating": 4.9,
+        "citations": 326,
+        "napConsistency": null,
+        "domainAuthority": 27,
+        "backlinks": 1992,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/417534",
+        "collectedAt": "2026-10-31T06:30:47.036Z"
+      }
     }
   },
   {
@@ -27,7 +44,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": 73,
     "lastAuditedAt": "2026-09-15T04:41:54.865Z",
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -35,6 +54,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=14207037708166422956",
       "gbpCid": "14207037708166422956"
+    },
+    "brightlocal": {
+      "locationId": "2366014",
+      "gbpReportId": "541468",
+      "snapshot": {
+        "reviews": 7,
+        "avgRating": 4.1,
+        "citations": 325,
+        "napConsistency": null,
+        "domainAuthority": 20,
+        "backlinks": 13230,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/541468",
+        "collectedAt": "2026-10-31T06:30:51.503Z"
+      }
     }
   },
   {
@@ -45,7 +80,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": 42,
     "lastAuditedAt": "2026-09-15T04:42:23.862Z",
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "https://alphafloralsb.com/",
       "ga4PropertyId": "",
@@ -53,6 +90,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=8413463367578477376",
       "gbpCid": "8413463367578477376"
+    },
+    "brightlocal": {
+      "locationId": "2149134",
+      "gbpReportId": "493997",
+      "snapshot": {
+        "reviews": 322,
+        "avgRating": 4.8,
+        "citations": 255,
+        "napConsistency": null,
+        "domainAuthority": 12,
+        "backlinks": 1166,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/493997",
+        "collectedAt": "2026-10-31T06:30:55.942Z"
+      }
     }
   },
   {
@@ -63,7 +116,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": 80,
     "lastAuditedAt": "2026-09-15T04:43:37.810Z",
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -71,6 +126,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=16036424450017826054",
       "gbpCid": "16036424450017826054"
+    },
+    "brightlocal": {
+      "locationId": "2301943",
+      "gbpReportId": "552276",
+      "snapshot": {
+        "reviews": 0,
+        "avgRating": 0,
+        "citations": 240,
+        "napConsistency": null,
+        "domainAuthority": 27,
+        "backlinks": 694,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/552276",
+        "collectedAt": "2026-10-31T06:33:20.771Z"
+      }
     }
   },
   {
@@ -81,7 +152,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": 100,
     "lastAuditedAt": "2026-09-15T04:43:57.758Z",
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -89,6 +162,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=4211217291293867298",
       "gbpCid": "4211217291293867298"
+    },
+    "brightlocal": {
+      "locationId": "1945105",
+      "gbpReportId": "440769",
+      "snapshot": {
+        "reviews": 259,
+        "avgRating": 5,
+        "citations": 377,
+        "napConsistency": null,
+        "domainAuthority": 20,
+        "backlinks": 1047,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/440769",
+        "collectedAt": "2026-10-31T06:31:03.232Z"
+      }
     }
   },
   {
@@ -99,7 +188,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "sc-domain:anokadental.com",
       "ga4PropertyId": "",
@@ -107,6 +198,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=3706399436111509002",
       "gbpCid": "3706399436111509002"
+    },
+    "brightlocal": {
+      "locationId": "216805",
+      "gbpReportId": "445204",
+      "snapshot": {
+        "reviews": 230,
+        "avgRating": 5,
+        "citations": 544,
+        "napConsistency": null,
+        "domainAuthority": 23,
+        "backlinks": 1270,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/445204",
+        "collectedAt": "2026-10-31T06:31:11.331Z"
+      }
     }
   },
   {
@@ -117,7 +224,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": 100,
     "lastAuditedAt": "2026-09-15T04:44:40.795Z",
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "sc-domain:brooklynblvddental.com",
       "ga4PropertyId": "",
@@ -125,6 +234,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=5751665479230192999",
       "gbpCid": "5751665479230192999"
+    },
+    "brightlocal": {
+      "locationId": "85225",
+      "gbpReportId": "14306",
+      "snapshot": {
+        "reviews": 418,
+        "avgRating": 4.9,
+        "citations": 126,
+        "napConsistency": null,
+        "domainAuthority": 21,
+        "backlinks": 1411,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/14306",
+        "collectedAt": "2026-10-31T06:31:14.965Z"
+      }
     }
   },
   {
@@ -135,7 +260,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "https://dentistnewprague.com/",
       "ga4PropertyId": "",
@@ -143,6 +270,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=1385204991757404899",
       "gbpCid": "1385204991757404899"
+    },
+    "brightlocal": {
+      "locationId": "2144206",
+      "gbpReportId": "492167",
+      "snapshot": {
+        "reviews": 16,
+        "avgRating": 4.4,
+        "citations": 201,
+        "napConsistency": null,
+        "domainAuthority": 8,
+        "backlinks": 380,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/492167",
+        "collectedAt": "2026-10-31T06:31:19.481Z"
+      }
     }
   },
   {
@@ -153,7 +296,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -161,6 +306,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=11528525803643066911",
       "gbpCid": "11528525803643066911"
+    },
+    "brightlocal": {
+      "locationId": "2406717",
+      "gbpReportId": "549845",
+      "snapshot": {
+        "reviews": 279,
+        "avgRating": 4.9,
+        "citations": 425,
+        "napConsistency": null,
+        "domainAuthority": 11,
+        "backlinks": 242,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/549845",
+        "collectedAt": "2026-10-31T06:31:27.978Z"
+      }
     }
   },
   {
@@ -171,7 +332,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -179,6 +342,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=1367354134829359998",
       "gbpCid": "1367354134829359998"
+    },
+    "brightlocal": {
+      "locationId": "90007",
+      "gbpReportId": "24873",
+      "snapshot": {
+        "reviews": 17,
+        "avgRating": 4.9,
+        "citations": 28,
+        "napConsistency": null,
+        "domainAuthority": 0,
+        "backlinks": 0,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/24873",
+        "collectedAt": "2026-10-31T06:31:30.623Z"
+      }
     }
   },
   {
@@ -189,7 +368,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -197,6 +378,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=10315583502966898532",
       "gbpCid": "10315583502966898532"
+    },
+    "brightlocal": {
+      "locationId": "2106931",
+      "gbpReportId": "481366",
+      "snapshot": {
+        "reviews": 217,
+        "avgRating": 4.8,
+        "citations": 207,
+        "napConsistency": null,
+        "domainAuthority": 11,
+        "backlinks": 149,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/481366",
+        "collectedAt": "2026-10-31T06:31:35.721Z"
+      }
     }
   },
   {
@@ -207,7 +404,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -215,6 +414,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=18232844091487048416",
       "gbpCid": "18232844091487048416"
+    },
+    "brightlocal": {
+      "locationId": "1836779",
+      "gbpReportId": "445760",
+      "snapshot": {
+        "reviews": 250,
+        "avgRating": 4.9,
+        "citations": 458,
+        "napConsistency": null,
+        "domainAuthority": 9,
+        "backlinks": 171,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/445760",
+        "collectedAt": "2026-10-31T06:31:51.710Z"
+      }
     }
   },
   {
@@ -225,7 +440,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -233,6 +450,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=13178155587619034680",
       "gbpCid": "13178155587619034680"
+    },
+    "brightlocal": {
+      "locationId": "153867",
+      "gbpReportId": "115383",
+      "snapshot": {
+        "reviews": 280,
+        "avgRating": 4.9,
+        "citations": 798,
+        "napConsistency": null,
+        "domainAuthority": 24,
+        "backlinks": 2255,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/115383",
+        "collectedAt": "2026-10-31T06:32:04.775Z"
+      }
     }
   },
   {
@@ -243,7 +476,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": 91,
     "lastAuditedAt": "2026-09-15T04:47:02.400Z",
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -251,6 +486,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=13546918091774463453",
       "gbpCid": "13546918091774463453"
+    },
+    "brightlocal": {
+      "locationId": "621587",
+      "gbpReportId": "130121",
+      "snapshot": {
+        "reviews": 218,
+        "avgRating": 4.9,
+        "citations": 909,
+        "napConsistency": null,
+        "domainAuthority": 23,
+        "backlinks": 534,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/130121",
+        "collectedAt": "2026-10-31T06:32:20.353Z"
+      }
     }
   },
   {
@@ -261,7 +512,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -269,6 +522,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=3448065345479901543",
       "gbpCid": "3448065345479901543"
+    },
+    "brightlocal": {
+      "locationId": "2165998",
+      "gbpReportId": "498896",
+      "snapshot": {
+        "reviews": 314,
+        "avgRating": 4.9,
+        "citations": 205,
+        "napConsistency": null,
+        "domainAuthority": 13,
+        "backlinks": 168,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/498896",
+        "collectedAt": "2026-10-31T06:32:27.438Z"
+      }
     }
   },
   {
@@ -279,7 +548,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "https://dieselcomponentsinc.com/",
       "ga4PropertyId": "",
@@ -287,6 +558,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=7013656975353676841",
       "gbpCid": "7013656975353676841"
+    },
+    "brightlocal": {
+      "locationId": "598939",
+      "gbpReportId": "125487",
+      "snapshot": {
+        "reviews": 35,
+        "avgRating": 4.7,
+        "citations": 839,
+        "napConsistency": null,
+        "domainAuthority": 19,
+        "backlinks": 3372,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/125487",
+        "collectedAt": "2026-10-31T06:32:33.798Z"
+      }
     }
   },
   {
@@ -297,7 +584,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -305,6 +594,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=3321724855998477254",
       "gbpCid": "3321724855998477254"
+    },
+    "brightlocal": {
+      "locationId": "430733",
+      "gbpReportId": "99185",
+      "snapshot": {
+        "reviews": 751,
+        "avgRating": 4.6,
+        "citations": 1125,
+        "napConsistency": null,
+        "domainAuthority": 26,
+        "backlinks": 1670,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/99185",
+        "collectedAt": "2026-10-31T06:32:38.438Z"
+      }
     }
   },
   {
@@ -315,7 +620,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -323,6 +630,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=11107935627032372279",
       "gbpCid": "11107935627032372279"
+    },
+    "brightlocal": {
+      "locationId": "2923904",
+      "gbpReportId": "657793",
+      "snapshot": {
+        "reviews": 2,
+        "avgRating": 3,
+        "citations": 55,
+        "napConsistency": null,
+        "domainAuthority": 14,
+        "backlinks": 211,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/657793",
+        "collectedAt": "2026-10-31T06:32:41.312Z"
+      }
     }
   },
   {
@@ -333,7 +656,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -341,6 +666,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=6539996812384163695",
       "gbpCid": "6539996812384163695"
+    },
+    "brightlocal": {
+      "locationId": "1181423",
+      "gbpReportId": "382765",
+      "snapshot": {
+        "reviews": 53,
+        "avgRating": 4.9,
+        "citations": 314,
+        "napConsistency": null,
+        "domainAuthority": 30,
+        "backlinks": 3106,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/382765",
+        "collectedAt": "2026-10-31T06:32:47.790Z"
+      }
     }
   },
   {
@@ -351,7 +692,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -359,6 +702,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=4079398595035777123",
       "gbpCid": "4079398595035777123"
+    },
+    "brightlocal": {
+      "locationId": "90015",
+      "gbpReportId": "520120",
+      "snapshot": {
+        "reviews": 223,
+        "avgRating": 4.9,
+        "citations": 181,
+        "napConsistency": null,
+        "domainAuthority": 21,
+        "backlinks": 830,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/520120",
+        "collectedAt": "2026-10-31T06:32:53.795Z"
+      }
     }
   },
   {
@@ -369,7 +728,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -377,6 +738,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=8840897615851712772",
       "gbpCid": "8840897615851712772"
+    },
+    "brightlocal": {
+      "locationId": "3733650",
+      "gbpReportId": "741146",
+      "snapshot": {
+        "reviews": 296,
+        "avgRating": 4.8,
+        "citations": 2,
+        "napConsistency": null,
+        "domainAuthority": 8,
+        "backlinks": 45,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/741146",
+        "collectedAt": "2026-10-31T06:32:56.654Z"
+      }
     }
   },
   {
@@ -389,7 +766,8 @@
     "lastAuditedAt": null,
     "connectors": {
       "seoptimer": false,
-      "semrush": false
+      "semrush": false,
+      "brightlocal": true
     },
     "google": {
       "gscSiteUrl": "",
@@ -398,6 +776,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=13994821489731857646",
       "gbpCid": "13994821489731857646"
+    },
+    "brightlocal": {
+      "locationId": "3853998",
+      "gbpReportId": "756995",
+      "snapshot": {
+        "reviews": 85,
+        "avgRating": 3.8,
+        "citations": 258,
+        "napConsistency": null,
+        "domainAuthority": 5,
+        "backlinks": 38,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/756995",
+        "collectedAt": "2026-10-31T06:33:03.177Z"
+      }
     }
   },
   {
@@ -408,7 +802,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -416,6 +812,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=1153831611998667100",
       "gbpCid": "1153831611998667100"
+    },
+    "brightlocal": {
+      "locationId": "3909635",
+      "gbpReportId": "746959",
+      "snapshot": {
+        "reviews": 359,
+        "avgRating": 4.8,
+        "citations": 494,
+        "napConsistency": null,
+        "domainAuthority": 26,
+        "backlinks": 1907,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/746959",
+        "collectedAt": "2026-10-31T06:33:20.771Z"
+      }
     }
   },
   {
@@ -426,7 +838,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -434,6 +848,22 @@
       "gbpAccountId": "",
       "gbpMapUrl": "https://www.google.com/maps?cid=6773598825684455519",
       "gbpCid": "6773598825684455519"
+    },
+    "brightlocal": {
+      "locationId": "3885519",
+      "gbpReportId": "741521",
+      "snapshot": {
+        "reviews": 303,
+        "avgRating": 4.9,
+        "citations": 189,
+        "napConsistency": null,
+        "domainAuthority": 19,
+        "backlinks": 3337,
+        "top3": 0,
+        "top10": 0,
+        "reportUrl": "https://tools.brightlocal.com/seo-tools/admin/gpw/reports/view/741521",
+        "collectedAt": "2026-10-31T06:33:05.499Z"
+      }
     }
   },
   {
@@ -444,7 +874,9 @@
     "createdAt": "2026-08-11T04:57:01.678Z",
     "lastScore": null,
     "lastAuditedAt": null,
-    "connectors": {},
+    "connectors": {
+      "brightlocal": true
+    },
     "google": {
       "gscSiteUrl": "",
       "ga4PropertyId": "",
@@ -452,6 +884,10 @@
       "gbpAccountId": "",
       "gbpMapUrl": "",
       "gbpCid": ""
+    },
+    "brightlocal": {
+      "locationId": "4054227",
+      "gbpReportId": "778818"
     }
   },
   {

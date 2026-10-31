@@ -32,3 +32,13 @@ services:
         sync: false
       - key: GOOGLE_SERVICE_ACCOUNT_JSON
         sync: false
+      # BrightLocal (local SEO) — one agency key; Sync auto-maps every client.
+      - key: BRIGHTLOCAL_API_KEY
+        sync: false           # set in dashboard (secret)
+      # Estimates fallback used by Sync's Phase B (traffic/keyword estimates).
+      - key: DATAFORSEO_LOGIN
+        sync: false
+      - key: DATAFORSEO_PASSWORD
+        sync: false
+      - key: OPENPAGERANK_API_KEY
+        sync: false

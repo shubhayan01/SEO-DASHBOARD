@@ -176,10 +176,13 @@ export async function runSync({ read, write, clientsFile, owner = null, syntheti
         reportUrl: b.reportUrl ?? null,
         collectedAt: new Date().toISOString(),
       });
-      // Commit a chosen report onto a target: store the mapping, and the live
-      // snapshot when its results came back.
-      const applyMapping = async (t, chosen) => {
+      // Commit a chosen report onto a target: store the mapping, enable the
+      // BrightLocal connector on its client so the Local SEO card renders, and
+      // cache the live snapshot when its results came back.
+      const applyMapping = async (client, t, chosen) => {
         t.setBl({ locationId: String(chosen.locationId || ''), gbpReportId: String(chosen.reportId || '') });
+        client.connectors = client.connectors || {};
+        client.connectors.brightlocal = true;
         report.phaseBL.mapped++;
         const r = await getResults(chosen.locationId, chosen.reportId);
         if (r.available) {
@@ -199,7 +202,7 @@ export async function runSync({ read, write, clientsFile, owner = null, syntheti
         for (const t of targetsOf(client)) {
           if (t.hasBl()) continue; // keep an existing mapping stable on re-sync
           const candidates = matchBlReports(reports, t.name);
-          if (!candidates.length) { unresolved.push(t); continue; }
+          if (!candidates.length) { unresolved.push({ client, t }); continue; }
           let chosen = candidates[0];
           if (candidates.length > 1) {
             const h = host(t.url);
@@ -208,7 +211,7 @@ export async function runSync({ read, write, clientsFile, owner = null, syntheti
               if (r.available && host(r.brightlocal.website) === h) { chosen = c; break; }
             }
           }
-          await applyMapping(t, chosen);
+          await applyMapping(client, t, chosen);
         }
       }
 
@@ -224,9 +227,9 @@ export async function runSync({ read, write, clientsFile, owner = null, syntheti
           const r = await getResults(rep.locationId, rep.reportId);
           if (r.available) { const h = host(r.brightlocal.website); if (h && !byHost.has(h)) byHost.set(h, rep); }
         }));
-        for (const t of unresolved) {
+        for (const { client, t } of unresolved) {
           const rep = byHost.get(host(t.url));
-          if (rep) { await applyMapping(t, rep); }
+          if (rep) { await applyMapping(client, t, rep); }
           else { report.phaseBL.unmatched++; report.phaseBL.details.push({ client: t.name, status: 'no BrightLocal report' }); }
         }
       }
