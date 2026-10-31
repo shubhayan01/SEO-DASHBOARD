@@ -166,7 +166,7 @@ async function loadPortfolio() {
     // Live if the Google account is connected, or if a sync has put live data
     // (real mapping or synthetic "live") onto any client in view.
     const anyLive = (state.portfolio.clients || []).some(
-      (c) => c.synthetic || c.connected?.gsc || c.connected?.ga4 || c.connected?.gbp
+      (c) => c.synthetic || c.connected?.gsc || c.connected?.ga4 || c.connected?.gbp || c.connected?.bl
     );
     if (state.portfolio.googleConfigured) { status.className = 'pill pill-live'; status.textContent = 'Google account connected'; }
     else if (anyLive) { status.className = 'pill pill-live'; status.textContent = 'Live data'; }
@@ -227,6 +227,7 @@ function renderPortfolioTable() {
         <span class="conn-dot ${r.connected.gsc ? 'on' : ''}" title="Search Console"></span>
         <span class="conn-dot ${r.connected.ga4 ? 'on' : ''}" title="Analytics"></span>
         <span class="conn-dot ${r.connected.gbp ? 'on' : ''}" title="Business Profile"></span>
+        <span class="conn-dot ${r.connected.bl ? 'on' : ''}" title="BrightLocal (local SEO)"></span>
       </span></td>
     </tr>`;
   }).join('');
@@ -274,10 +275,12 @@ async function runSync() {
 
 function showSyncSummary(r) {
   if (!r) return;
-  const a = r.phaseA || {}, b = r.phaseB || {}, c = r.phaseC || {};
+  const a = r.phaseA || {}, bl = r.phaseBL || {}, b = r.phaseB || {}, c = r.phaseC || {};
   const lines = [];
   lines.push(`Connected to real Google data: ${a.gscMatched || 0} Search Console, ${a.ga4Matched || 0} GA4.`);
   if (a.skipped) lines.push('• Real data: ' + a.skipped);
+  if (bl.mapped) lines.push(`Pulled live BrightLocal data for ${bl.fetched || bl.mapped} client(s)${bl.unmatched ? ` (${bl.unmatched} without a report)` : ''}.`);
+  else if (bl.skipped) lines.push('• BrightLocal: ' + bl.skipped);
   if (c.synthesized) lines.push(`Generated live-style data for ${c.synthesized} site(s) with no Google grant.`);
   if (b.estimated) lines.push(`Estimated (by URL) for ${b.estimated} more site(s)${b.provider ? ' via ' + b.provider : ''}.`);
   if (b.failed) lines.push(`• ${b.failed} site(s) had no estimate available.`);

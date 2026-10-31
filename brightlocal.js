@@ -65,6 +65,31 @@ async function firstGbpReportId(locationId) {
   return first ? pickKey(first, 'report_id', 'report-id') : null;
 }
 
+// List EVERY Google Business Profile report in the account (no location filter).
+// Used by Sync to discover which BrightLocal reports exist and auto-map them to
+// the agency's clients. The report_name is usually "Business Name, CODE", so we
+// split off the business-name part for matching. Reading the list is free.
+export async function listGbpReports() {
+  try {
+    const j = await blGet('/v4/gpw');
+    const list = unwrap(j);
+    const arr = Array.isArray(list) ? list : list.results || [];
+    const reports = arr
+      .map((r) => {
+        const reportId = pickKey(r, 'report_id', 'report-id');
+        const locationId = pickKey(r, 'location_id', 'location-id');
+        const rawName = pickKey(r, 'report_name', 'report-name') || '';
+        // "Brooklyn Blvd Dental, BROOKLYNBLVD-55429" -> "Brooklyn Blvd Dental"
+        const bizName = String(rawName).split(',')[0].trim() || rawName;
+        return reportId ? { reportId, locationId, name: bizName, rawName } : null;
+      })
+      .filter(Boolean);
+    return { available: true, reports };
+  } catch (e) {
+    return { available: false, error: e.message, reports: [] };
+  }
+}
+
 export async function fetchBrightLocal(locationId, { gbpReportId } = {}) {
   try {
     if (!locationId && !gbpReportId) return { available: false, error: 'No BrightLocal location configured' };
@@ -101,6 +126,7 @@ export async function fetchBrightLocal(locationId, { gbpReportId } = {}) {
     const brightlocal = {
       hasData: true,
       businessName: pickKey(summary, 'business_name', 'business-name') || null,
+      website: pickKey(summary, 'website_address', 'website-address', 'website') || null,
       claimed: Boolean(summary.claimed),
       domainAuthority: num(pickKey(summary, 'domain_authority', 'domain-authority')),
       backlinks: num(summary.backlinks),

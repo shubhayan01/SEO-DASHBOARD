@@ -429,6 +429,9 @@ app.get('/api/portfolio', auth, (req, res) => {
     const d = generateDashboard(c, c.connectors || {}, synthOpts(c));
     const trafficSeries = d.trafficTrend.map((x) => x.organic);
     const synthetic = Boolean(c.synthetic);
+    // Live BrightLocal snapshot cached by the last Sync (reviews, rating, …).
+    const blConnected = brightlocalConfigured() && Boolean(c.brightlocal?.locationId || c.brightlocal?.gbpReportId);
+    const blSnap = (blConnected && c.brightlocal?.snapshot) || null;
     return {
       id: c.id,
       name: c.name,
@@ -440,6 +443,7 @@ app.get('/api/portfolio', auth, (req, res) => {
         gsc: Boolean(c.google?.gscSiteUrl) || synthetic,
         ga4: Boolean(c.google?.ga4PropertyId) || synthetic,
         gbp: Boolean(c.google?.gbpLocationId) || synthetic,
+        bl: blConnected,
       },
       synthetic,
       metrics: {
@@ -449,8 +453,9 @@ app.get('/api/portfolio', auth, (req, res) => {
         clicks: d.searchConsole.clicks,
         conversions: d.ga4.conversions,
         gbpReach: d.gbp.reach.total,
-        gbpRating: d.gbp.reviews.avgRating,
-        gbpReviews: d.gbp.reviews.count,
+        // BrightLocal is the source of truth for reviews + rating once synced.
+        gbpRating: blSnap?.avgRating != null ? blSnap.avgRating : d.gbp.reviews.avgRating,
+        gbpReviews: blSnap?.reviews != null ? blSnap.reviews : d.gbp.reviews.count,
         cwvPass: d.crux.passRate,
         avgPosition: d.overview.avgPosition.value,
         health: d.siteHealth.score,

@@ -21,6 +21,7 @@
 
 import { googleConfigured, listSearchConsoleSites, listGA4Properties } from './google.js';
 import { estimatesConfigured, estimatesProviders, fetchEstimates } from './estimates.js';
+import { brightlocalConfigured, listGbpReports, fetchBrightLocal } from './brightlocal.js';
 
 // ---- matching helpers (kept consistent with gsc-ga4-discover.js) ----
 const host = (u) => {
@@ -42,6 +43,9 @@ function targetsOf(client) {
       setEstimates: (e) => { s.estimates = e; },
       hasSynthetic: () => Boolean(s.synthetic),
       setSynthetic: (v) => { s.synthetic = v; },
+      getBl: () => (s.brightlocal = s.brightlocal || {}),
+      hasBl: () => Boolean(s.brightlocal?.locationId || s.brightlocal?.gbpReportId),
+      setBl: (bl) => { s.brightlocal = { ...(s.brightlocal || {}), ...bl }; },
     }));
   }
   return [{
@@ -51,6 +55,9 @@ function targetsOf(client) {
     setEstimates: (e) => { client.estimates = e; },
     hasSynthetic: () => Boolean(client.synthetic),
     setSynthetic: (v) => { client.synthetic = v; },
+    getBl: () => (client.brightlocal = client.brightlocal || {}),
+    hasBl: () => Boolean(client.brightlocal?.locationId || client.brightlocal?.gbpReportId),
+    setBl: (bl) => { client.brightlocal = { ...(client.brightlocal || {}), ...bl }; },
   }];
 }
 
@@ -71,8 +78,27 @@ function matchGa4(props, url, name) {
     || null;
 }
 
+// Candidate BrightLocal reports for a client: same (normalized) business name,
+// or one name contained in the other. Returns all candidates so the caller can
+// break ties by website host when a brand has several GBP locations.
+function matchBlReports(reports, name) {
+  const n = norm(name);
+  if (!n) return [];
+  const exact = reports.filter((r) => norm(r.name) === n);
+  if (exact.length) return exact;
+  return reports.filter((r) => {
+    const rn = norm(r.name);
+    return rn && (rn.includes(n) || n.includes(rn));
+  });
+}
+
 export function syncReadiness() {
-  return { googleConfigured: googleConfigured(), estimatesConfigured: estimatesConfigured(), providers: estimatesProviders() };
+  return {
+    googleConfigured: googleConfigured(),
+    estimatesConfigured: estimatesConfigured(),
+    providers: estimatesProviders(),
+    brightlocalConfigured: brightlocalConfigured(),
+  };
 }
 
 /**
@@ -86,7 +112,9 @@ export async function runSync({ read, write, clientsFile, owner = null, syntheti
     startedAt, finishedAt: null,
     googleConfigured: googleConfigured(),
     estimatesConfigured: estimatesConfigured(),
+    brightlocalConfigured: brightlocalConfigured(),
     phaseA: { gscMatched: 0, ga4Matched: 0, details: [], skipped: null },
+    phaseBL: { mapped: 0, fetched: 0, unmatched: 0, failed: 0, details: [], skipped: null },
     phaseB: { estimated: 0, failed: 0, provider: null, details: [], skipped: null },
     phaseC: { synthesized: 0, details: [], skipped: null },
   };
@@ -113,6 +141,93 @@ export async function runSync({ read, write, clientsFile, owner = null, syntheti
           const m = matchGa4(ga4Props, t.url, t.name);
           if (m) { g.ga4PropertyId = m.id; report.phaseA.ga4Matched++;
             report.phaseA.details.push({ client: t.name, type: 'ga4', mapped: `${m.id} (${m.name})` }); }
+        }
+      }
+    }
+  }
+
+  // ---------- PHASE BL: BrightLocal — map every client to its GBP report ----------
+  // One agency API key sees every client's BrightLocal report. We list them all,
+  // auto-map each to a client by business name (website host breaks ties when a
+  // brand has several locations), store the mapping so report views pull live
+  // local-SEO data, and cache a snapshot so the portfolio shows live numbers too.
+  if (!brightlocalConfigured()) {
+    report.phaseBL.skipped = 'BrightLocal API key not configured.';
+  } else {
+    const listed = await listGbpReports();
+    if (!listed.available) {
+      report.phaseBL.skipped = 'Could not list BrightLocal reports: ' + listed.error;
+    } else {
+      const reports = listed.reports;
+      const resultsCache = new Map(); // reportId -> fetchBrightLocal result
+      const getResults = async (locationId, reportId) => {
+        if (!resultsCache.has(reportId)) resultsCache.set(reportId, await fetchBrightLocal(locationId, { gbpReportId: reportId }));
+        return resultsCache.get(reportId);
+      };
+      const snapshotFrom = (b) => ({
+        reviews: b.reviews?.count ?? null,
+        avgRating: b.reviews?.avgRating ?? null,
+        citations: b.citations?.count ?? null,
+        napConsistency: b.citations?.napConsistency ?? null,
+        domainAuthority: b.domainAuthority ?? null,
+        backlinks: b.backlinks ?? null,
+        top3: Array.isArray(b.localRankings) ? b.localRankings.filter((k) => k.inTop3).length : null,
+        top10: Array.isArray(b.localRankings) ? b.localRankings.filter((k) => k.inTop10).length : null,
+        reportUrl: b.reportUrl ?? null,
+        collectedAt: new Date().toISOString(),
+      });
+      // Commit a chosen report onto a target: store the mapping, and the live
+      // snapshot when its results came back.
+      const applyMapping = async (t, chosen) => {
+        t.setBl({ locationId: String(chosen.locationId || ''), gbpReportId: String(chosen.reportId || '') });
+        report.phaseBL.mapped++;
+        const r = await getResults(chosen.locationId, chosen.reportId);
+        if (r.available) {
+          t.setBl({ snapshot: snapshotFrom(r.brightlocal) });
+          report.phaseBL.fetched++;
+          report.phaseBL.details.push({ client: t.name, report: chosen.rawName, reportId: chosen.reportId, reviews: r.brightlocal.reviews?.count, rating: r.brightlocal.reviews?.avgRating });
+        } else {
+          report.phaseBL.failed++;
+          report.phaseBL.details.push({ client: t.name, report: chosen.rawName, reportId: chosen.reportId, error: r.error });
+        }
+      };
+
+      // Pass 1 — match by business name (website host breaks ties among a brand's
+      // multiple locations). Collect anything still unmatched for pass 2.
+      const unresolved = [];
+      for (const client of scoped) {
+        for (const t of targetsOf(client)) {
+          if (t.hasBl()) continue; // keep an existing mapping stable on re-sync
+          const candidates = matchBlReports(reports, t.name);
+          if (!candidates.length) { unresolved.push(t); continue; }
+          let chosen = candidates[0];
+          if (candidates.length > 1) {
+            const h = host(t.url);
+            for (const c of candidates) {
+              const r = await getResults(c.locationId, c.reportId);
+              if (r.available && host(r.brightlocal.website) === h) { chosen = c; break; }
+            }
+          }
+          await applyMapping(t, chosen);
+        }
+      }
+
+      // Pass 2 — website-host fallback for clients whose name didn't match any
+      // report (e.g. "IMIT" vs report "Imagine IT", or a typo'd client name).
+      // We read each remaining report's results (free) to learn its website and
+      // match on host. Only runs when something is still unresolved.
+      if (unresolved.length) {
+        const chosenIds = new Set(scoped.flatMap((c) => targetsOf(c)).map((t) => t.getBl().gbpReportId).filter(Boolean));
+        const remaining = reports.filter((r) => !chosenIds.has(String(r.reportId)));
+        const byHost = new Map();
+        await Promise.all(remaining.map(async (rep) => {
+          const r = await getResults(rep.locationId, rep.reportId);
+          if (r.available) { const h = host(r.brightlocal.website); if (h && !byHost.has(h)) byHost.set(h, rep); }
+        }));
+        for (const t of unresolved) {
+          const rep = byHost.get(host(t.url));
+          if (rep) { await applyMapping(t, rep); }
+          else { report.phaseBL.unmatched++; report.phaseBL.details.push({ client: t.name, status: 'no BrightLocal report' }); }
         }
       }
     }
