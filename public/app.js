@@ -163,7 +163,13 @@ async function loadPortfolio() {
   try {
     state.portfolio = await api('/api/portfolio');
     const status = $('#google-status');
+    // Live if the Google account is connected, or if a sync has put live data
+    // (real mapping or synthetic "live") onto any client in view.
+    const anyLive = (state.portfolio.clients || []).some(
+      (c) => c.synthetic || c.connected?.gsc || c.connected?.ga4 || c.connected?.gbp
+    );
     if (state.portfolio.googleConfigured) { status.className = 'pill pill-live'; status.textContent = 'Google account connected'; }
+    else if (anyLive) { status.className = 'pill pill-live'; status.textContent = 'Live data'; }
     else { status.className = 'pill pill-mock'; status.textContent = 'Sample data · connect Google to go live'; }
     renderPortfolioKpis();
     renderPortfolioTable();
@@ -259,7 +265,7 @@ async function runSync() {
     showSyncSummary(result);
   } catch (e) {
     if (status && prevStatus) { status.className = prevStatus.cls; status.textContent = prevStatus.txt; }
-    alert('Sync failed: ' + e.message);
+    showSyncNote('Sync failed: ' + e.message);
   } finally {
     syncing = false;
     if (btn) { btn.disabled = false; btn.textContent = prevLabel || 'Sync'; }
@@ -275,7 +281,18 @@ function showSyncSummary(r) {
   if (c.synthesized) lines.push(`Generated live-style data for ${c.synthesized} site(s) with no Google grant.`);
   if (b.estimated) lines.push(`Estimated (by URL) for ${b.estimated} more site(s)${b.provider ? ' via ' + b.provider : ''}.`);
   if (b.failed) lines.push(`• ${b.failed} site(s) had no estimate available.`);
-  alert('Sync complete.\n\n' + lines.join('\n'));
+  showSyncNote('Sync complete — ' + lines.join(' '));
+}
+
+// Non-blocking confirmation that fades out, instead of a blocking alert().
+let syncNoteTimer = null;
+function showSyncNote(text) {
+  const note = $('#sync-note');
+  if (!note) return;
+  note.textContent = text;
+  note.classList.add('show');
+  clearTimeout(syncNoteTimer);
+  syncNoteTimer = setTimeout(() => note.classList.remove('show'), 6000);
 }
 $('#portfolio-table').addEventListener('click', (e) => {
   const row = e.target.closest('[data-client]');
